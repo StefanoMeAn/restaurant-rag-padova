@@ -17,3 +17,7 @@ langchain-chroma
 langchain-huggingface
 langchain-text-splitters
 chromadb
+
+transformers
+accelerate
+bitsandbytes
