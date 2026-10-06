@@ -1,1 +1,26 @@
+# Environment variables / API keys
+.env
 
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Local vector database
+embeddings/
+chroma_db/
+
+# Large/local generated files
+*.log
