@@ -46,7 +46,7 @@ def load_llm():
             device_map="cpu",
             torch_dtype=torch.float32,
         )
-
+        
     generator = pipeline(
         task="text-generation",
         model=model,
@@ -56,6 +56,7 @@ def load_llm():
         top_p=0.8,
         repetition_penalty=1.1,
         return_full_text=False,
+        clean_up_tokenization_spaces=False,
     )
 
     return tokenizer, generator
