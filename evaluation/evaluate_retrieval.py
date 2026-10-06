@@ -12,7 +12,7 @@ from src.vector_store import load_vector_store
 
 QUESTIONS_PATH = Path("evaluation/questions.json")
 RESULTS_DIR = Path("evaluation/results")
-OUTPUT_PATH = RESULTS_DIR / "baseline_retrieval.json"
+OUTPUT_PATH = RESULTS_DIR / "query_aware_retrieval_v1.json"
 
 
 def load_questions():
@@ -27,7 +27,7 @@ def load_questions():
 
 
 def evaluate():
-    """Run evaluation questions and save retrieval results."""
+    """Run retrieval evaluation and save the results."""
 
     print("Loading vector database...\n")
 
@@ -46,21 +46,24 @@ def evaluate():
         question = item["question"]
         category = item["category"]
 
+        # Semantic retrieval
         documents = retrieve_documents(
             vector_store,
             question,
             k=4,
         )
 
+        # Query-aware ranking
         documents = rank_restaurants(
             documents,
-            question
+            question,
         )
 
         retrieved = []
 
         print("=" * 80)
-        print(f"[{category.upper()}] {question}\n")
+        print(f"[{category.upper()}] {question}")
+        print()
 
         for rank, document in enumerate(
             documents,
@@ -69,29 +72,111 @@ def evaluate():
 
             metadata = document.metadata
 
+            name = metadata.get(
+                "name",
+                "Unknown",
+            )
+
+            place_id = metadata.get(
+                "place_id"
+            )
+
+            rating = metadata.get(
+                "rating"
+            )
+
+            rating_count = metadata.get(
+                "user_ratings_total"
+            )
+
+            price = metadata.get(
+                "price_level"
+            )
+
+            location = metadata.get(
+                "location"
+            )
+
+            delivery = metadata.get(
+                "delivery"
+            )
+
+            dine_in = metadata.get(
+                "dine_in"
+            )
+
+            reservable = metadata.get(
+                "reservable"
+            )
+
+            serves_wine = metadata.get(
+                "serves_wine"
+            )
+
+            serves_beer = metadata.get(
+                "serves_beer"
+            )
+
+            chunk_id = metadata.get(
+                "chunk_id"
+            )
+
             restaurant = {
                 "rank": rank,
-                "name": metadata.get("name"),
-                "place_id": metadata.get("place_id"),
-                "rating": metadata.get("rating"),
-                "user_ratings_total": metadata.get(
-                    "user_ratings_total"
-                ),
-                "price_level": metadata.get("price_level"),
-                "location": metadata.get("location"),
-                "chunk_id": metadata.get("chunk_id"),
+                "name": name,
+                "place_id": place_id,
+                "rating": rating,
+                "user_ratings_total": rating_count,
+                "price_level": price,
+                "location": location,
+                "delivery": delivery,
+                "dine_in": dine_in,
+                "reservable": reservable,
+                "serves_wine": serves_wine,
+                "serves_beer": serves_beer,
+                "chunk_id": chunk_id,
             }
 
-            retrieved.append(restaurant)
+            retrieved.append(
+                restaurant
+            )
 
-            print(f"{rank}. {restaurant['name']}")
+            print(f"{rank}. {name}")
+
             print(
-                f"   Rating: {restaurant['rating']}/5 "
-                f"({restaurant['user_ratings_total']} ratings)"
+                f"   Rating: {rating}/5 "
+                f"({rating_count} ratings)"
             )
+
             print(
-                f"   Price: {restaurant['price_level']}"
+                f"   Price: {price}"
             )
+
+            print(
+                f"   Delivery: {delivery}"
+            )
+
+            print(
+                f"   Dine-in: {dine_in}"
+            )
+
+            print(
+                f"   Reservable: {reservable}"
+            )
+
+            print(
+                f"   Serves wine: {serves_wine}"
+            )
+
+            print(
+                f"   Serves beer: {serves_beer}"
+            )
+
+            print(
+                f"   Location: {location}"
+            )
+
+            print()
 
         results.append(
             {
@@ -102,18 +187,19 @@ def evaluate():
             }
         )
 
-        print()
-
+    # Create results directory if necessary
     RESULTS_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )
 
+    # Save evaluation results
     with open(
         OUTPUT_PATH,
         "w",
         encoding="utf-8",
     ) as file:
+
         json.dump(
             results,
             file,
@@ -122,8 +208,13 @@ def evaluate():
         )
 
     print("=" * 80)
+
     print(
-        f"Baseline results saved to: {OUTPUT_PATH}"
+        "Query-aware retrieval results saved to:"
+    )
+
+    print(
+        OUTPUT_PATH
     )
 
 
