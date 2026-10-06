@@ -106,27 +106,46 @@ def retrieve_documents(
 
 
 def build_context(documents):
-    """Combine retrieved chunks into the LLM context."""
+    """Build structured context from retrieved restaurant chunks."""
 
     context_sections = []
 
-    for index, document in enumerate(documents, start=1):
+    for document in documents:
 
-        restaurant = document.metadata.get(
+        metadata = document.metadata
+
+        name = metadata.get(
             "name",
             "Unknown restaurant",
         )
 
+        rating = metadata.get(
+            "rating",
+            "Unknown",
+        )
+
+        rating_count = metadata.get(
+            "user_ratings_total",
+            "Unknown",
+        )
+
+        location = metadata.get(
+            "location",
+            "Unknown",
+        )
+
         section = (
-            f"Document {index}\n"
-            f"Restaurant: {restaurant}\n"
+            f"Restaurant: {name}\n"
+            f"Average rating: {rating}/5\n"
+            f"Number of ratings: {rating_count}\n"
+            f"Location: {location}\n\n"
+            f"Retrieved information:\n"
             f"{document.page_content}"
         )
 
         context_sections.append(section)
 
-    return "\n\n".join(context_sections)
-
+    return "\n\n---\n\n".join(context_sections)
 
 # ---------------------------------------------------------------------
 # Prompt
