@@ -1,0 +1,472 @@
+[
+  {
+    "id": "pizza",
+    "category": "cuisine",
+    "question": "Which restaurants are good for pizza?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Pizzeria Risto Bar L'OASI DEI SAPORI",
+        "place_id": "ChIJIV1XSgDbfkcRh4waz4ZZ7xA",
+        "rating": 5.0,
+        "user_ratings_total": 146.0,
+        "price_level": null,
+        "location": "Via Cavazzana, 14/16, 35123",
+        "chunk_id": 2
+      },
+      {
+        "rank": 2,
+        "name": "Pizzeria casa della pizza",
+        "place_id": "ChIJr5tB2cLbfkcR3IIzpGihSfY",
+        "rating": 4.7,
+        "user_ratings_total": 69.0,
+        "price_level": null,
+        "location": "Via Michelangelo Buonarroti, 14, 35134",
+        "chunk_id": 2
+      },
+      {
+        "rank": 3,
+        "name": "L'Altra Pizza",
+        "place_id": "ChIJabAehqHbfkcRk7tmK755Y5E",
+        "rating": 4.5,
+        "user_ratings_total": 102.0,
+        "price_level": null,
+        "location": "Via Arturo Graf, 24, 35125",
+        "chunk_id": 2
+      },
+      {
+        "rank": 4,
+        "name": "Pizza Padova",
+        "place_id": "ChIJa9Opc_jbfkcRm1L-CBId7cI",
+        "rating": 4.4,
+        "user_ratings_total": 79.0,
+        "price_level": null,
+        "location": "Via Palermo, 6, 35142",
+        "chunk_id": 2
+      }
+    ]
+  },
+  {
+    "id": "kebab",
+    "category": "cuisine",
+    "question": "What is the best kebab in Padova?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Bangla Pizza Kebab",
+        "place_id": "ChIJw_EOCFPafkcRkHl-ZG5iSPQ",
+        "rating": 4.1,
+        "user_ratings_total": 286.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Umberto I, 87, 35123",
+        "chunk_id": 1
+      },
+      {
+        "rank": 2,
+        "name": "Ciao Pizza kebab & Fast Food",
+        "place_id": "ChIJNeZ9PXfbfkcRnei9vD--8yg",
+        "rating": 4.0,
+        "user_ratings_total": 265.0,
+        "price_level": null,
+        "location": "Piazzale Mazzini, 61, 35138",
+        "chunk_id": 4
+      },
+      {
+        "rank": 3,
+        "name": "Star kebab",
+        "place_id": "ChIJp_3I38nbfkcRB8VdSFG-S4o",
+        "rating": 3.9,
+        "user_ratings_total": 23.0,
+        "price_level": null,
+        "location": "Piazzale della Stazione, 8, 35131",
+        "chunk_id": 3
+      },
+      {
+        "rank": 4,
+        "name": "Il Re Del Kebab",
+        "place_id": "ChIJd-HLaPfafkcRHsOB_7jMnAs",
+        "rating": 3.6,
+        "user_ratings_total": 320.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Giambattista Belzoni, 127, 35131",
+        "chunk_id": 1
+      }
+    ]
+  },
+  {
+    "id": "cheap",
+    "category": "price",
+    "question": "Recommend a cheap restaurant.",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "XIANG DIMSUM",
+        "place_id": "ChIJ8bOvVVvbfkcRMALWRV3IgOc",
+        "rating": 4.9,
+        "user_ratings_total": 452.0,
+        "price_level": "moderate ($$)",
+        "location": "Via T. Aspetti, 43, 35132",
+        "chunk_id": 9
+      },
+      {
+        "rank": 2,
+        "name": "Rosticceria Garhwal",
+        "place_id": "ChIJ9UiTT_fafkcRut_yP1YsBsU",
+        "rating": 4.2,
+        "user_ratings_total": 232.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Ognissanti, 6, 35131",
+        "chunk_id": 7
+      },
+      {
+        "rank": 3,
+        "name": "Gourmetteria",
+        "place_id": "ChIJ3UsowFDafkcR9WHsVtRoxeY",
+        "rating": 4.1,
+        "user_ratings_total": 1972.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Zabarella, 23, 35121",
+        "chunk_id": 6
+      },
+      {
+        "rank": 4,
+        "name": "KPC - Ristorante Indiano Padova",
+        "place_id": "ChIJscoyyvbbfkcRXpB2hzeOECg",
+        "rating": 3.5,
+        "user_ratings_total": 30.0,
+        "price_level": null,
+        "location": "Via T. Aspetti, 95, 35135",
+        "chunk_id": 3
+      }
+    ]
+  },
+  {
+    "id": "wine",
+    "category": "service",
+    "question": "I want a restaurant with good reviews that serves wine.",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Dante alle Piazze",
+        "place_id": "ChIJcYOv3U_afkcRkMVR93RtSZY",
+        "rating": 4.5,
+        "user_ratings_total": 449.0,
+        "price_level": "expensive ($$$)",
+        "location": "Via Daniele Manin, 10, 35139",
+        "chunk_id": 4
+      },
+      {
+        "rank": 2,
+        "name": "10 Lounge Bar",
+        "place_id": "ChIJXztlYkTafkcRvXfQIZxXeiI",
+        "rating": 4.5,
+        "user_ratings_total": 100.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Francesco Petrarca, 10, 35137",
+        "chunk_id": 3
+      },
+      {
+        "rank": 3,
+        "name": "Osteria Nane della Giulia",
+        "place_id": "ChIJL7_PE1fafkcRgSh4yy4s7hY",
+        "rating": 4.3,
+        "user_ratings_total": 1741.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Santa Sofia, 1, 35121",
+        "chunk_id": 2
+      },
+      {
+        "rank": 4,
+        "name": "Gourmetteria",
+        "place_id": "ChIJ3UsowFDafkcR9WHsVtRoxeY",
+        "rating": 4.1,
+        "user_ratings_total": 1972.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Zabarella, 23, 35121",
+        "chunk_id": 3
+      }
+    ]
+  },
+  {
+    "id": "romantic",
+    "category": "occasion",
+    "question": "Which restaurant is good for a romantic dinner?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Belle Parti",
+        "place_id": "ChIJ4U7CXEXafkcR7oN3Djs5qmA",
+        "rating": 4.6,
+        "user_ratings_total": 751.0,
+        "price_level": "very expensive ($$$$)",
+        "location": "Via Belle Parti, 11, 35139",
+        "chunk_id": 2
+      },
+      {
+        "rank": 2,
+        "name": "UMAMI Ristorante Fusion - Sushi - Asporto e Consegna a Domicilio",
+        "place_id": "ChIJ3ewzZ67bfkcR4il3B6HgofU",
+        "rating": 4.5,
+        "user_ratings_total": 431.0,
+        "price_level": "moderate ($$)",
+        "location": "Corso Vittorio Emanuele II, 249, 35123",
+        "chunk_id": 5
+      },
+      {
+        "rank": 3,
+        "name": "Anna e Rido Padova",
+        "place_id": "ChIJHdait-HbfkcRrBjT4Evyw1Y",
+        "rating": 4.5,
+        "user_ratings_total": 30.0,
+        "price_level": null,
+        "location": "Via Andrea Costa, 18/a, 35124",
+        "chunk_id": 4
+      },
+      {
+        "rank": 4,
+        "name": "Pizzeria Da Giorgia",
+        "place_id": "ChIJI7PAUzbafkcRMTDjHU9OScI",
+        "rating": 4.2,
+        "user_ratings_total": 738.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Palestro, 20, 35138",
+        "chunk_id": 3
+      }
+    ]
+  },
+  {
+    "id": "family",
+    "category": "occasion",
+    "question": "Recommend a family-friendly restaurant.",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Ristorante Dahlak",
+        "place_id": "ChIJXfkbLcvbfkcRc2C7g29Hfig",
+        "rating": 4.5,
+        "user_ratings_total": 567.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Sorio, 73, 35141",
+        "chunk_id": 2
+      },
+      {
+        "rank": 2,
+        "name": "Gustoteca",
+        "place_id": "ChIJqS4YJi3bfkcRcNXWtF3UmJ4",
+        "rating": 4.4,
+        "user_ratings_total": 575.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Venezia, 106, 35129",
+        "chunk_id": 3
+      },
+      {
+        "rank": 3,
+        "name": "Bar Palestro",
+        "place_id": "ChIJt4xb_jbafkcR92LZ7uPUm14",
+        "rating": 4.3,
+        "user_ratings_total": 119.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Palestro, 24, 35138",
+        "chunk_id": 1
+      },
+      {
+        "rank": 4,
+        "name": "Trattoria Isoletta",
+        "place_id": "ChIJyeqWM0TafkcR86G_L77oiAI",
+        "rating": 3.9,
+        "user_ratings_total": 841.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via S. Pietro, 46, 35139",
+        "chunk_id": 6
+      }
+    ]
+  },
+  {
+    "id": "vegan",
+    "category": "diet",
+    "question": "Where can I find good vegan food?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "GingerGi VeggiePop restaurant",
+        "place_id": "ChIJG7UGxAnbfkcREudGKik5bY4",
+        "rating": 4.6,
+        "user_ratings_total": 640.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Pilade Bronzetti, 18, 35138",
+        "chunk_id": 2
+      },
+      {
+        "rank": 2,
+        "name": "Osteria Di Fuori Porta",
+        "place_id": "ChIJGT3onmjafkcRVB-53dEILI4",
+        "rating": 4.5,
+        "user_ratings_total": 688.0,
+        "price_level": "moderate ($$)",
+        "location": "Via T. Aspetti, 7/A, 35132",
+        "chunk_id": 3
+      },
+      {
+        "rank": 3,
+        "name": "Veganda",
+        "place_id": "ChIJ_3dC4k3afkcRXwGwiT_mJ3U",
+        "rating": 4.1,
+        "user_ratings_total": 1402.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Cavazzana, Prato della Valle, 1, 35123",
+        "chunk_id": 7
+      },
+      {
+        "rank": 4,
+        "name": "Chicken Club (Halal)",
+        "place_id": "ChIJAQB06u3afkcR1WEucC4PDUw",
+        "rating": 3.8,
+        "user_ratings_total": 234.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Antonio Grassi, 24, 35129",
+        "chunk_id": 2
+      }
+    ]
+  },
+  {
+    "id": "gluten_free",
+    "category": "diet",
+    "question": "Which restaurants have good gluten-free options?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Spicchi Crunch",
+        "place_id": "ChIJ35z8q1PbfkcROjUyFACKU_0",
+        "rating": 4.7,
+        "user_ratings_total": 29.0,
+        "price_level": null,
+        "location": "Via del Vescovado, 49, 35141",
+        "chunk_id": 5
+      },
+      {
+        "rank": 2,
+        "name": "Ristorante Pizzeria Al Carmine",
+        "place_id": "ChIJgahnhkTafkcRjOS0yqc05k0",
+        "rating": 4.3,
+        "user_ratings_total": 1616.0,
+        "price_level": "moderate ($$)",
+        "location": "Piazza Petrarca, 8, 35137",
+        "chunk_id": 6
+      },
+      {
+        "rank": 3,
+        "name": "Sicilian Goodness - Padova via Roma",
+        "place_id": "ChIJu5Rzsb3bfkcRysC5dLiUi_o",
+        "rating": 4.1,
+        "user_ratings_total": 458.0,
+        "price_level": null,
+        "location": "Via Roma, 121, 35123",
+        "chunk_id": 4
+      },
+      {
+        "rank": 4,
+        "name": "Green Pizza Padova",
+        "place_id": "ChIJWRgFNmfbfkcRoNsqMUEyfSA",
+        "rating": 4.1,
+        "user_ratings_total": 140.0,
+        "price_level": null,
+        "location": "Via S. Gregorio Barbarigo, 87, 35122",
+        "chunk_id": 3
+      }
+    ]
+  },
+  {
+    "id": "delivery",
+    "category": "service",
+    "question": "Recommend a restaurant that offers delivery.",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "TAD-K Take A. & Delivery",
+        "place_id": "ChIJyb0gEyDbfkcRdxfcWzwo0QI",
+        "rating": 4.8,
+        "user_ratings_total": 52.0,
+        "price_level": null,
+        "location": "Via Niccolò Orsini, 43, 35141",
+        "chunk_id": 5
+      },
+      {
+        "rank": 2,
+        "name": "Trattoria Isoletta",
+        "place_id": "ChIJyeqWM0TafkcR86G_L77oiAI",
+        "rating": 3.9,
+        "user_ratings_total": 841.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via S. Pietro, 46, 35139",
+        "chunk_id": 6
+      },
+      {
+        "rank": 3,
+        "name": "Roadhouse Grill",
+        "place_id": "ChIJv0mh_OvafkcRUbLYYKnV7Kk",
+        "rating": 3.7,
+        "user_ratings_total": 4487.0,
+        "price_level": "moderate ($$)",
+        "location": "Via Pietro Donà, 2, 35100",
+        "chunk_id": 2
+      },
+      {
+        "rank": 4,
+        "name": "Pizzeria Serius",
+        "place_id": "ChIJFZlx5qrbfkcReT3oKYwNbPI",
+        "rating": 3.3,
+        "user_ratings_total": 15.0,
+        "price_level": null,
+        "location": "Via Cavazzana, 24, 35123",
+        "chunk_id": 4
+      }
+    ]
+  },
+  {
+    "id": "city_center",
+    "category": "location",
+    "question": "Where can I eat near the city center?",
+    "retrieved_restaurants": [
+      {
+        "rank": 1,
+        "name": "Wok Time",
+        "place_id": "ChIJUxwaIPjbfkcR4xlDmkxgmUI",
+        "rating": 4.7,
+        "user_ratings_total": 284.0,
+        "price_level": "inexpensive ($)",
+        "location": "Via Niccolò Tommaseo, 96/C, 35131",
+        "chunk_id": 3
+      },
+      {
+        "rank": 2,
+        "name": "Osteria BocaBona",
+        "place_id": "ChIJ286K2DHafkcRxR81Q66BBos",
+        "rating": 4.4,
+        "user_ratings_total": 724.0,
+        "price_level": "moderate ($$)",
+        "location": "V. Pelosa, 4, 35136",
+        "chunk_id": 2
+      },
+      {
+        "rank": 3,
+        "name": "Al Santo",
+        "place_id": "ChIJc4KRSVHafkcRJ94UuOtZI5o",
+        "rating": 4.4,
+        "user_ratings_total": 679.0,
+        "price_level": "moderate ($$)",
+        "location": "Via del Santo, 147, 35123",
+        "chunk_id": 3
+      },
+      {
+        "rank": 4,
+        "name": "Punto al Centro",
+        "place_id": "ChIJfy9L-u3afkcRIMtKujQiQCA",
+        "rating": 4.0,
+        "user_ratings_total": 47.0,
+        "price_level": null,
+        "location": "Piazza Giacomo Zanellato, 15/16, 35128",
+        "chunk_id": 4
+      }
+    ]
+  }
+]
