@@ -8,8 +8,7 @@ from transformers import (
     pipeline,
 )
 
-from vector_store import load_vector_store
-
+from src.vector_store import load_vector_store
 
 # ---------------------------------------------------------------------
 # Configuration
