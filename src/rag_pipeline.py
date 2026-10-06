@@ -133,29 +133,41 @@ def build_context(documents):
 # ---------------------------------------------------------------------
 
 def build_prompt(tokenizer, question, context):
-    """Build the Phi-3 chat prompt."""
+    """Build a grounded Phi-3 prompt for restaurant recommendations."""
 
     messages = [
         {
             "role": "system",
             "content": (
                 "You are a restaurant recommendation assistant "
-                "for Padova, Italy. "
-                "Answer using only the information contained "
-                "in the retrieved context. "
-                "Do not invent restaurant information. "
-                "If the context does not contain enough "
-                "information to answer the question, say so. "
-                "When recommending restaurants, explain briefly "
-                "why they match the user's request. "
-                "Keep the answer concise."
+                "specialized in restaurants in Padova, Italy.\n\n"
+
+                "You must answer using only the information provided "
+                "in the retrieved restaurant context.\n\n"
+
+                "Rules:\n"
+                "1. Do not invent facts that are not present in the context.\n"
+                "2. Do not refer to 'documents', 'context', or document numbers "
+                "in your answer.\n"
+                "3. When the user asks for the 'best' restaurant, do not treat "
+                "a single positive review as proof that it is objectively the best.\n"
+                "4. Compare the available restaurants using evidence such as "
+                "ratings, number of ratings, reviews, services, price level, "
+                "and other information present in the context.\n"
+                "5. If the evidence is insufficient to identify one clear best "
+                "option, say that explicitly and recommend the strongest "
+                "candidate or candidates based on the available information.\n"
+                "6. Explain briefly why each recommendation matches the request.\n"
+                "7. Never claim that a restaurant offers a service, food, "
+                "opening time, or other feature unless it appears in the context.\n"
+                "8. Keep the answer concise and natural."
             ),
         },
         {
             "role": "user",
             "content": (
-                f"Context:\n{context}\n\n"
-                f"Question: {question}"
+                f"Restaurant information:\n\n{context}\n\n"
+                f"User question: {question}"
             ),
         },
     ]
@@ -165,7 +177,6 @@ def build_prompt(tokenizer, question, context):
         tokenize=False,
         add_generation_prompt=True,
     )
-
 
 # ---------------------------------------------------------------------
 # RAG
