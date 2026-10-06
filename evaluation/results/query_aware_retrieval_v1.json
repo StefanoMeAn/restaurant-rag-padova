@@ -12,6 +12,11 @@
         "user_ratings_total": 146.0,
         "price_level": null,
         "location": "Via Cavazzana, 14/16, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 2
       },
       {
@@ -22,6 +27,11 @@
         "user_ratings_total": 69.0,
         "price_level": null,
         "location": "Via Michelangelo Buonarroti, 14, 35134",
+        "delivery": true,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 2
       },
       {
@@ -32,6 +42,11 @@
         "user_ratings_total": 102.0,
         "price_level": null,
         "location": "Via Arturo Graf, 24, 35125",
+        "delivery": false,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 2
       },
       {
@@ -42,6 +57,11 @@
         "user_ratings_total": 79.0,
         "price_level": null,
         "location": "Via Palermo, 6, 35142",
+        "delivery": true,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 2
       }
     ]
@@ -59,6 +79,11 @@
         "user_ratings_total": 286.0,
         "price_level": "inexpensive ($)",
         "location": "Via Umberto I, 87, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 1
       },
       {
@@ -69,6 +94,11 @@
         "user_ratings_total": 265.0,
         "price_level": null,
         "location": "Piazzale Mazzini, 61, 35138",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 4
       },
       {
@@ -79,6 +109,11 @@
         "user_ratings_total": 23.0,
         "price_level": null,
         "location": "Piazzale della Stazione, 8, 35131",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 3
       },
       {
@@ -89,6 +124,11 @@
         "user_ratings_total": 320.0,
         "price_level": "inexpensive ($)",
         "location": "Via Giambattista Belzoni, 127, 35131",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 1
       }
     ]
@@ -106,6 +146,11 @@
         "user_ratings_total": 232.0,
         "price_level": "inexpensive ($)",
         "location": "Via Ognissanti, 6, 35131",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 7
       },
       {
@@ -116,6 +161,11 @@
         "user_ratings_total": 452.0,
         "price_level": "moderate ($$)",
         "location": "Via T. Aspetti, 43, 35132",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 9
       },
       {
@@ -126,6 +176,11 @@
         "user_ratings_total": 1972.0,
         "price_level": "moderate ($$)",
         "location": "Via Zabarella, 23, 35121",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 6
       },
       {
@@ -136,6 +191,11 @@
         "user_ratings_total": 30.0,
         "price_level": null,
         "location": "Via T. Aspetti, 95, 35135",
+        "delivery": false,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 3
       }
     ]
@@ -153,6 +213,11 @@
         "user_ratings_total": 449.0,
         "price_level": "expensive ($$$)",
         "location": "Via Daniele Manin, 10, 35139",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 4
       },
       {
@@ -163,6 +228,11 @@
         "user_ratings_total": 100.0,
         "price_level": "moderate ($$)",
         "location": "Via Francesco Petrarca, 10, 35137",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       },
       {
@@ -173,6 +243,11 @@
         "user_ratings_total": 1741.0,
         "price_level": "moderate ($$)",
         "location": "Via Santa Sofia, 1, 35121",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 2
       },
       {
@@ -183,6 +258,11 @@
         "user_ratings_total": 1972.0,
         "price_level": "moderate ($$)",
         "location": "Via Zabarella, 23, 35121",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       }
     ]
@@ -200,6 +280,11 @@
         "user_ratings_total": 751.0,
         "price_level": "very expensive ($$$$)",
         "location": "Via Belle Parti, 11, 35139",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": false,
         "chunk_id": 2
       },
       {
@@ -210,6 +295,11 @@
         "user_ratings_total": 431.0,
         "price_level": "moderate ($$)",
         "location": "Corso Vittorio Emanuele II, 249, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 5
       },
       {
@@ -220,6 +310,11 @@
         "user_ratings_total": 30.0,
         "price_level": null,
         "location": "Via Andrea Costa, 18/a, 35124",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 4
       },
       {
@@ -230,6 +325,11 @@
         "user_ratings_total": 738.0,
         "price_level": "inexpensive ($)",
         "location": "Via Palestro, 20, 35138",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       }
     ]
@@ -247,6 +347,11 @@
         "user_ratings_total": 567.0,
         "price_level": "moderate ($$)",
         "location": "Via Sorio, 73, 35141",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 2
       },
       {
@@ -257,6 +362,11 @@
         "user_ratings_total": 575.0,
         "price_level": "moderate ($$)",
         "location": "Via Venezia, 106, 35129",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       },
       {
@@ -267,6 +377,11 @@
         "user_ratings_total": 119.0,
         "price_level": "moderate ($$)",
         "location": "Via Palestro, 24, 35138",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 1
       },
       {
@@ -277,6 +392,11 @@
         "user_ratings_total": 841.0,
         "price_level": "inexpensive ($)",
         "location": "Via S. Pietro, 46, 35139",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 6
       }
     ]
@@ -294,6 +414,11 @@
         "user_ratings_total": 640.0,
         "price_level": "moderate ($$)",
         "location": "Via Pilade Bronzetti, 18, 35138",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 2
       },
       {
@@ -304,6 +429,11 @@
         "user_ratings_total": 688.0,
         "price_level": "moderate ($$)",
         "location": "Via T. Aspetti, 7/A, 35132",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       },
       {
@@ -314,6 +444,11 @@
         "user_ratings_total": 1402.0,
         "price_level": "inexpensive ($)",
         "location": "Via Cavazzana, Prato della Valle, 1, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 7
       },
       {
@@ -324,6 +459,11 @@
         "user_ratings_total": 234.0,
         "price_level": "inexpensive ($)",
         "location": "Via Antonio Grassi, 24, 35129",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 2
       }
     ]
@@ -341,6 +481,11 @@
         "user_ratings_total": 29.0,
         "price_level": null,
         "location": "Via del Vescovado, 49, 35141",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 5
       },
       {
@@ -351,6 +496,11 @@
         "user_ratings_total": 1616.0,
         "price_level": "moderate ($$)",
         "location": "Piazza Petrarca, 8, 35137",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 6
       },
       {
@@ -361,6 +511,11 @@
         "user_ratings_total": 458.0,
         "price_level": null,
         "location": "Via Roma, 121, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 4
       },
       {
@@ -371,6 +526,11 @@
         "user_ratings_total": 140.0,
         "price_level": null,
         "location": "Via S. Gregorio Barbarigo, 87, 35122",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": false,
+        "serves_wine": false,
+        "serves_beer": false,
         "chunk_id": 3
       }
     ]
@@ -388,6 +548,11 @@
         "user_ratings_total": 52.0,
         "price_level": null,
         "location": "Via Niccolò Orsini, 43, 35141",
+        "delivery": true,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 5
       },
       {
@@ -398,6 +563,11 @@
         "user_ratings_total": 100.0,
         "price_level": "inexpensive ($)",
         "location": "Via Egidio Forcellini, 132N, 35128",
+        "delivery": true,
+        "dine_in": false,
+        "reservable": true,
+        "serves_wine": false,
+        "serves_beer": true,
         "chunk_id": 3
       },
       {
@@ -408,6 +578,11 @@
         "user_ratings_total": 841.0,
         "price_level": "inexpensive ($)",
         "location": "Via S. Pietro, 46, 35139",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 6
       },
       {
@@ -418,6 +593,11 @@
         "user_ratings_total": 15.0,
         "price_level": null,
         "location": "Via Cavazzana, 24, 35123",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 4
       }
     ]
@@ -435,6 +615,11 @@
         "user_ratings_total": 724.0,
         "price_level": "moderate ($$)",
         "location": "V. Pelosa, 4, 35136",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 2
       },
       {
@@ -445,6 +630,11 @@
         "user_ratings_total": 679.0,
         "price_level": "moderate ($$)",
         "location": "Via del Santo, 147, 35123",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 3
       },
       {
@@ -455,6 +645,11 @@
         "user_ratings_total": 211.0,
         "price_level": "expensive ($$$)",
         "location": "Via Sant'Agnese, 21, 35139",
+        "delivery": false,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": false,
         "chunk_id": 3
       },
       {
@@ -465,6 +660,11 @@
         "user_ratings_total": 47.0,
         "price_level": null,
         "location": "Piazza Giacomo Zanellato, 15/16, 35128",
+        "delivery": true,
+        "dine_in": true,
+        "reservable": true,
+        "serves_wine": true,
+        "serves_beer": true,
         "chunk_id": 4
       }
     ]
