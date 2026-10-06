@@ -160,7 +160,10 @@ def build_context(documents):
 
     context_sections = []
 
-    for document in documents:
+    for rank, document in enumerate(
+    documents,
+    start=1,
+):
 
         metadata = document.metadata
 
@@ -185,6 +188,7 @@ def build_context(documents):
         )
 
         section = (
+            f"Rank: {rank}\n"
             f"Restaurant: {name}\n"
             f"Average rating: {rating}/5\n"
             f"Number of ratings: {rating_count}\n"
@@ -198,7 +202,6 @@ def build_context(documents):
     return "\n\n---\n\n".join(
         context_sections
     )
-
 
 def build_prompt(
     tokenizer,
@@ -214,41 +217,45 @@ def build_prompt(
                 "You are a restaurant recommendation assistant "
                 "specialized in restaurants in Padova, Italy.\n\n"
 
-                "You must answer using only the information provided "
-                "in the restaurant information below.\n\n"
+                "The restaurant ranking has already been computed "
+                "by the recommendation system. "
+                "Restaurants are provided in ranked order, with the "
+                "first restaurant being the primary recommendation.\n\n"
+
+                "Your task is NOT to rank the restaurants. "
+                "Your task is only to explain the recommendation "
+                "using the provided information.\n\n"
 
                 "Rules:\n"
-                "1. Do not invent facts that are not present in the "
-                "provided information.\n"
-                "2. Do not refer to documents, context, chunks, or "
-                "document numbers in your answer.\n"
-                "3. When the user asks for the best restaurant, do "
-                "not treat a single positive review as proof that it "
-                "is objectively the best.\n"
-                "4. Compare restaurants using available evidence such "
-                "as average rating, number of ratings, reviews, "
-                "services, price level, and location.\n"
-                "5. Give more importance to aggregate ratings and "
-                "the number of ratings than to a single review.\n"
-                "6. If the evidence is insufficient to identify one "
-                "clear best option, say so and recommend the strongest "
-                "candidate or candidates based on the available "
-                "information.\n"
-                "7. Explain briefly why the recommendation matches "
-                "the user's request.\n"
-                "8. Never claim that a restaurant offers a service, "
-                "food, opening time, or other feature unless it "
-                "appears in the provided information.\n"
-                "9. Keep the answer concise: recommend at most two restaurants "
-                "and answer in no more than 120 words."
+                "1. Use only facts explicitly present in the "
+                "restaurant information.\n"
+                "2. Never invent or infer atmosphere, cuisine, "
+                "location quality, popularity, service quality, "
+                "landmarks, prices, or other characteristics.\n"
+                "3. Do not change the ranking.\n"
+                "4. Recommend the first restaurant as the primary "
+                "option.\n"
+                "5. You may mention the second restaurant as an "
+                "alternative if useful.\n"
+                "6. Copy numerical facts exactly. Do not recalculate "
+                "or reinterpret ratings or rating counts.\n"
+                "7. Do not claim that one restaurant has a higher "
+                "rating than another unless explicitly necessary.\n"
+                "8. Do not refer to documents, chunks, retrieval, "
+                "context, or the recommendation system.\n"
+                "9. If the provided information does not support a "
+                "specific claim, omit that claim.\n"
+                "10. Keep the answer concise and under 90 words."
             ),
         },
         {
             "role": "user",
             "content": (
-                f"Restaurant information:\n\n"
+                f"Ranked restaurant information:\n\n"
                 f"{context}\n\n"
-                f"User question: {question}"
+                f"User question: {question}\n\n"
+                "Explain why the first restaurant is a suitable "
+                "recommendation."
             ),
         },
     ]
@@ -258,7 +265,6 @@ def build_prompt(
         tokenize=False,
         add_generation_prompt=True,
     )
-
 
 class RestaurantRAG:
     """Restaurant recommendation RAG pipeline."""
