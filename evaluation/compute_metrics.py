@@ -1,152 +1,193 @@
-"""Compute retrieval metrics for Restaurant RAG Padova."""
+"""Compare baseline and query-aware retrieval strategies."""
 
-import json
-from pathlib import Path
-
-
-RESULTS_DIR = Path("evaluation/results")
-
-BASELINE_PATH = (
-    RESULTS_DIR / "baseline_retrieval_v1.json"
+from src.rag_pipeline import (
+    rank_restaurants,
+    retrieve_documents,
 )
-
-QUERY_AWARE_PATH = (
-    RESULTS_DIR / "query_aware_retrieval_v1.json"
-)
+from src.vector_store import load_vector_store
 
 
-CONSTRAINTS = {
-    "cheap": {
+QUESTIONS = [
+    {
+        "id": "cheap",
+        "question": "Recommend a cheap restaurant.",
         "field": "price_level",
         "expected": "inexpensive ($)",
     },
-    "wine": {
+    {
+        "id": "wine",
+        "question": (
+            "I want a restaurant with good reviews "
+            "that serves wine."
+        ),
         "field": "serves_wine",
         "expected": True,
     },
-    "delivery": {
+    {
+        "id": "delivery",
+        "question": (
+            "Recommend a restaurant that offers delivery."
+        ),
         "field": "delivery",
         "expected": True,
     },
-}
+]
 
 
-def load_results(path):
-    """Load evaluation results from JSON."""
+def baseline_rank_restaurants(documents):
+    """Reproduce the original rating-based ranking."""
 
-    with open(
-        path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-        return json.load(file)
+    def ranking_key(document):
 
+        rating = (
+            document.metadata.get("rating")
+            or 0
+        )
 
-def find_question(results, question_id):
-    """Find evaluation results for a specific question."""
+        rating_count = (
+            document.metadata.get(
+                "user_ratings_total"
+            )
+            or 0
+        )
 
-    for item in results:
-        if item["id"] == question_id:
-            return item
+        return (
+            rating,
+            rating_count,
+        )
 
-    raise ValueError(
-        f"Question '{question_id}' not found."
+    return sorted(
+        documents,
+        key=ranking_key,
+        reverse=True,
     )
 
 
 def constraint_satisfaction(
-    item,
+    documents,
     field,
     expected,
 ):
-    """Calculate the fraction of top-k results satisfying a constraint."""
+    """Return fraction of results satisfying the constraint."""
 
-    restaurants = item[
-        "retrieved_restaurants"
-    ]
-
-    if not restaurants:
+    if not documents:
         return 0.0
 
     matches = sum(
-        restaurant.get(field) == expected
-        for restaurant in restaurants
+        document.metadata.get(field)
+        == expected
+        for document in documents
     )
 
-    return matches / len(restaurants)
+    return matches / len(documents)
 
 
 def top1_satisfaction(
-    item,
+    documents,
     field,
     expected,
 ):
-    """Check whether the top-ranked restaurant satisfies the constraint."""
+    """Return whether the first result satisfies the constraint."""
 
-    restaurants = item[
-        "retrieved_restaurants"
-    ]
-
-    if not restaurants:
+    if not documents:
         return 0
 
     return int(
-        restaurants[0].get(field)
+        documents[0].metadata.get(field)
         == expected
     )
 
 
-def evaluate_system(
-    results,
-):
-    """Compute constraint metrics for one retrieval system."""
+def evaluate():
+    """Compare baseline and query-aware ranking."""
 
-    metrics = {}
+    print("Loading vector database...\n")
 
-    for question_id, constraint in CONSTRAINTS.items():
+    vector_store = load_vector_store()
 
-        item = find_question(
-            results,
-            question_id,
+    rows = []
+
+    for item in QUESTIONS:
+
+        question = item["question"]
+        field = item["field"]
+        expected = item["expected"]
+
+        # Retrieve the same semantic candidates once.
+        documents = retrieve_documents(
+            vector_store,
+            question,
+            k=4,
         )
 
-        field = constraint["field"]
-        expected = constraint["expected"]
+        # Baseline:
+        # rating + rating count only.
+        baseline_documents = (
+            baseline_rank_restaurants(
+                documents.copy()
+            )
+        )
 
-        satisfaction_at_4 = (
+        # Improved:
+        # query constraint + rating + rating count.
+        query_aware_documents = (
+            rank_restaurants(
+                documents.copy(),
+                question,
+            )
+        )
+
+        baseline_at_4 = (
             constraint_satisfaction(
-                item,
+                baseline_documents,
                 field,
                 expected,
             )
         )
 
-        top1 = top1_satisfaction(
-            item,
-            field,
-            expected,
+        query_aware_at_4 = (
+            constraint_satisfaction(
+                query_aware_documents,
+                field,
+                expected,
+            )
         )
 
-        metrics[question_id] = {
-            "constraint_satisfaction_at_4":
-                satisfaction_at_4,
-            "top1_constraint_satisfaction":
-                top1,
-        }
+        baseline_at_1 = (
+            top1_satisfaction(
+                baseline_documents,
+                field,
+                expected,
+            )
+        )
 
-    return metrics
+        query_aware_at_1 = (
+            top1_satisfaction(
+                query_aware_documents,
+                field,
+                expected,
+            )
+        )
 
-
-def print_comparison(
-    baseline_metrics,
-    query_aware_metrics,
-):
-    """Print baseline vs query-aware retrieval metrics."""
+        rows.append(
+            {
+                "id": item["id"],
+                "baseline_at_4":
+                    baseline_at_4,
+                "query_aware_at_4":
+                    query_aware_at_4,
+                "baseline_at_1":
+                    baseline_at_1,
+                "query_aware_at_1":
+                    query_aware_at_1,
+            }
+        )
 
     print()
     print(
         "Restaurant RAG Retrieval Evaluation"
     )
+
     print("=" * 72)
 
     print(
@@ -159,99 +200,88 @@ def print_comparison(
 
     print("-" * 72)
 
-    for question_id in CONSTRAINTS:
-
-        baseline = baseline_metrics[
-            question_id
-        ]
-
-        improved = query_aware_metrics[
-            question_id
-        ]
-
-        baseline_at_4 = (
-            baseline[
-                "constraint_satisfaction_at_4"
-            ]
-            * 100
-        )
-
-        improved_at_4 = (
-            improved[
-                "constraint_satisfaction_at_4"
-            ]
-            * 100
-        )
-
-        baseline_at_1 = (
-            baseline[
-                "top1_constraint_satisfaction"
-            ]
-            * 100
-        )
-
-        improved_at_1 = (
-            improved[
-                "top1_constraint_satisfaction"
-            ]
-            * 100
-        )
+    for row in rows:
 
         print(
-            f"{question_id:<12}"
-            f"{baseline_at_4:>13.1f}%"
-            f"{improved_at_4:>15.1f}%"
-            f"{baseline_at_1:>13.0f}%"
-            f"{improved_at_1:>15.0f}%"
+            f"{row['id']:<12}"
+            f"{row['baseline_at_4'] * 100:>13.1f}%"
+            f"{row['query_aware_at_4'] * 100:>15.1f}%"
+            f"{row['baseline_at_1'] * 100:>13.0f}%"
+            f"{row['query_aware_at_1'] * 100:>15.0f}%"
         )
 
     print("-" * 72)
 
     baseline_average = sum(
-        value[
-            "constraint_satisfaction_at_4"
-        ]
-        for value in baseline_metrics.values()
-    ) / len(baseline_metrics)
+        row["baseline_at_4"]
+        for row in rows
+    ) / len(rows)
 
     query_aware_average = sum(
-        value[
-            "constraint_satisfaction_at_4"
-        ]
-        for value in query_aware_metrics.values()
-    ) / len(query_aware_metrics)
+        row["query_aware_at_4"]
+        for row in rows
+    ) / len(rows)
+
+    baseline_top1_average = sum(
+        row["baseline_at_1"]
+        for row in rows
+    ) / len(rows)
+
+    query_aware_top1_average = sum(
+        row["query_aware_at_1"]
+        for row in rows
+    ) / len(rows)
 
     print(
         f"{'Average':<12}"
         f"{baseline_average * 100:>13.1f}%"
         f"{query_aware_average * 100:>15.1f}%"
+        f"{baseline_top1_average * 100:>13.1f}%"
+        f"{query_aware_top1_average * 100:>15.1f}%"
     )
 
+    print()
 
-def main():
-    """Compare baseline and query-aware retrieval."""
+    print("Top results")
+    print("=" * 72)
 
-    baseline_results = load_results(
-        BASELINE_PATH
-    )
+    for item in QUESTIONS:
 
-    query_aware_results = load_results(
-        QUERY_AWARE_PATH
-    )
+        question = item["question"]
 
-    baseline_metrics = evaluate_system(
-        baseline_results
-    )
+        documents = retrieve_documents(
+            vector_store,
+            question,
+            k=4,
+        )
 
-    query_aware_metrics = evaluate_system(
-        query_aware_results
-    )
+        baseline_documents = (
+            baseline_rank_restaurants(
+                documents.copy()
+            )
+        )
 
-    print_comparison(
-        baseline_metrics,
-        query_aware_metrics,
-    )
+        query_aware_documents = (
+            rank_restaurants(
+                documents.copy(),
+                question,
+            )
+        )
+
+        print(
+            f"\n{item['id'].upper()}"
+        )
+
+        print(
+            "Baseline:    "
+            f"{baseline_documents[0].metadata.get('name')}"
+        )
+
+        print(
+            "Query-aware: "
+            f"{query_aware_documents[0].metadata.get('name')}"
+        )
 
 
 if __name__ == "__main__":
-    main()
+    evaluate()
