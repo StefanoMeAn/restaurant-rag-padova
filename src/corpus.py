@@ -250,6 +250,13 @@ def build_corpus(restaurants, reviews):
             "rating": row.get("rating"),
             "user_ratings_total": row.get("user_ratings_total"),
             "price_level": row.get("price_level"),
+            "delivery": is_true(row.get("delivery")),
+            "dine_in": is_true(row.get("dine_in")),
+            "reservable": is_true(row.get("reservable")),
+            "serves_breakfast": is_true(row.get("serves_breakfast")),
+            "serves_lunch": is_true(row.get("serves_lunch")),
+            "serves_dinner": is_true(row.get("serves_dinner")),
+            "serves_beer": is_true(row.get("serves_beer")),
             "serves_wine": is_true(row.get("serves_wine")),
         }
 
