@@ -78,13 +78,32 @@ def retrieve_documents(
     vector_store,
     question,
     k=TOP_K,
+    fetch_k=20,
 ):
-    """Retrieve the most relevant restaurant chunks."""
+    """Retrieve relevant chunks from unique restaurants."""
 
-    return vector_store.similarity_search(
+    candidates = vector_store.similarity_search(
         question,
-        k=k,
+        k=fetch_k,
     )
+
+    selected = []
+    seen_restaurants = set()
+
+    for document in candidates:
+
+        place_id = document.metadata.get("place_id")
+
+        if place_id in seen_restaurants:
+            continue
+
+        seen_restaurants.add(place_id)
+        selected.append(document)
+
+        if len(selected) == k:
+            break
+
+    return selected
 
 
 def build_context(documents):
