@@ -1,0 +1,52 @@
+[
+  {
+    "id": "pizza",
+    "question": "Which restaurants are good for pizza?",
+    "category": "cuisine"
+  },
+  {
+    "id": "kebab",
+    "question": "What is the best kebab in Padova?",
+    "category": "cuisine"
+  },
+  {
+    "id": "cheap",
+    "question": "Recommend a cheap restaurant.",
+    "category": "price"
+  },
+  {
+    "id": "wine",
+    "question": "I want a restaurant with good reviews that serves wine.",
+    "category": "service"
+  },
+  {
+    "id": "romantic",
+    "question": "Which restaurant is good for a romantic dinner?",
+    "category": "occasion"
+  },
+  {
+    "id": "family",
+    "question": "Recommend a family-friendly restaurant.",
+    "category": "occasion"
+  },
+  {
+    "id": "vegan",
+    "question": "Where can I find good vegan food?",
+    "category": "diet"
+  },
+  {
+    "id": "gluten_free",
+    "question": "Which restaurants have good gluten-free options?",
+    "category": "diet"
+  },
+  {
+    "id": "delivery",
+    "question": "Recommend a restaurant that offers delivery.",
+    "category": "service"
+  },
+  {
+    "id": "city_center",
+    "question": "Where can I eat near the city center?",
+    "category": "location"
+  }
+]
