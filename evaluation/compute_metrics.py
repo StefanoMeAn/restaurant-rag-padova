@@ -1,11 +1,14 @@
-"""Compare baseline and query-aware retrieval strategies."""
+"""Compare baseline, query-aware v1, and query-aware v2 retrieval."""
 
 from src.rag_pipeline import (
+    CANDIDATE_K,
     rank_restaurants,
     retrieve_documents,
 )
 from src.vector_store import load_vector_store
 
+
+TOP_K = 4
 
 QUESTIONS = [
     {
@@ -38,23 +41,13 @@ def baseline_rank_restaurants(documents):
     """Reproduce the original rating-based ranking."""
 
     def ranking_key(document):
-
-        rating = (
-            document.metadata.get("rating")
-            or 0
-        )
-
+        rating = document.metadata.get("rating") or 0
         rating_count = (
-            document.metadata.get(
-                "user_ratings_total"
-            )
+            document.metadata.get("user_ratings_total")
             or 0
         )
 
-        return (
-            rating,
-            rating_count,
-        )
+        return rating, rating_count
 
     return sorted(
         documents,
@@ -68,14 +61,13 @@ def constraint_satisfaction(
     field,
     expected,
 ):
-    """Return fraction of results satisfying the constraint."""
+    """Return fraction of results satisfying a constraint."""
 
     if not documents:
         return 0.0
 
     matches = sum(
-        document.metadata.get(field)
-        == expected
+        document.metadata.get(field) == expected
         for document in documents
     )
 
@@ -87,7 +79,7 @@ def top1_satisfaction(
     field,
     expected,
 ):
-    """Return whether the first result satisfies the constraint."""
+    """Return whether the first result satisfies a constraint."""
 
     if not documents:
         return 0
@@ -98,8 +90,29 @@ def top1_satisfaction(
     )
 
 
+def evaluate_strategy(
+    documents,
+    field,
+    expected,
+):
+    """Calculate @4 and @1 constraint metrics."""
+
+    return {
+        "at_4": constraint_satisfaction(
+            documents,
+            field,
+            expected,
+        ),
+        "at_1": top1_satisfaction(
+            documents,
+            field,
+            expected,
+        ),
+    }
+
+
 def evaluate():
-    """Compare baseline and query-aware ranking."""
+    """Compare the three retrieval strategies."""
 
     print("Loading vector database...\n")
 
@@ -113,173 +126,157 @@ def evaluate():
         field = item["field"]
         expected = item["expected"]
 
-        # Retrieve the same semantic candidates once.
-        documents = retrieve_documents(
+        # -------------------------------------------------
+        # Baseline and v1 use the same four semantic results
+        # -------------------------------------------------
+
+        top4_candidates = retrieve_documents(
             vector_store,
             question,
-            k=4,
+            k=TOP_K,
         )
 
-        # Baseline:
-        # rating + rating count only.
         baseline_documents = (
             baseline_rank_restaurants(
-                documents.copy()
+                top4_candidates.copy()
             )
         )
 
-        # Improved:
-        # query constraint + rating + rating count.
-        query_aware_documents = (
-            rank_restaurants(
-                documents.copy(),
-                question,
-            )
+        v1_documents = rank_restaurants(
+            top4_candidates.copy(),
+            question,
         )
 
-        baseline_at_4 = (
-            constraint_satisfaction(
-                baseline_documents,
-                field,
-                expected,
-            )
+        # -------------------------------------------------
+        # v2 retrieves a larger candidate pool first
+        # -------------------------------------------------
+
+        candidate_pool = retrieve_documents(
+            vector_store,
+            question,
+            k=CANDIDATE_K,
         )
 
-        query_aware_at_4 = (
-            constraint_satisfaction(
-                query_aware_documents,
-                field,
-                expected,
-            )
+        v2_documents = rank_restaurants(
+            candidate_pool,
+            question,
+        )[:TOP_K]
+
+        baseline_metrics = evaluate_strategy(
+            baseline_documents,
+            field,
+            expected,
         )
 
-        baseline_at_1 = (
-            top1_satisfaction(
-                baseline_documents,
-                field,
-                expected,
-            )
+        v1_metrics = evaluate_strategy(
+            v1_documents,
+            field,
+            expected,
         )
 
-        query_aware_at_1 = (
-            top1_satisfaction(
-                query_aware_documents,
-                field,
-                expected,
-            )
+        v2_metrics = evaluate_strategy(
+            v2_documents,
+            field,
+            expected,
         )
 
         rows.append(
             {
                 "id": item["id"],
-                "baseline_at_4":
-                    baseline_at_4,
-                "query_aware_at_4":
-                    query_aware_at_4,
-                "baseline_at_1":
-                    baseline_at_1,
-                "query_aware_at_1":
-                    query_aware_at_1,
+                "baseline": baseline_metrics,
+                "v1": v1_metrics,
+                "v2": v2_metrics,
+                "baseline_top":
+                    baseline_documents[0].metadata.get(
+                        "name"
+                    ),
+                "v1_top":
+                    v1_documents[0].metadata.get(
+                        "name"
+                    ),
+                "v2_top":
+                    v2_documents[0].metadata.get(
+                        "name"
+                    ),
             }
         )
 
-    print()
     print(
         "Restaurant RAG Retrieval Evaluation"
     )
-
-    print("=" * 72)
+    print("=" * 75)
 
     print(
         f"{'Query':<12}"
-        f"{'Baseline@4':>14}"
-        f"{'QueryAware@4':>16}"
+        f"{'Baseline@4':>13}"
+        f"{'V1@4':>10}"
+        f"{'V2@4':>10}"
         f"{'Baseline@1':>14}"
-        f"{'QueryAware@1':>16}"
+        f"{'V1@1':>10}"
+        f"{'V2@1':>10}"
     )
 
-    print("-" * 72)
+    print("-" * 75)
 
     for row in rows:
 
         print(
             f"{row['id']:<12}"
-            f"{row['baseline_at_4'] * 100:>13.1f}%"
-            f"{row['query_aware_at_4'] * 100:>15.1f}%"
-            f"{row['baseline_at_1'] * 100:>13.0f}%"
-            f"{row['query_aware_at_1'] * 100:>15.0f}%"
+            f"{row['baseline']['at_4'] * 100:>12.1f}%"
+            f"{row['v1']['at_4'] * 100:>9.1f}%"
+            f"{row['v2']['at_4'] * 100:>9.1f}%"
+            f"{row['baseline']['at_1'] * 100:>13.0f}%"
+            f"{row['v1']['at_1'] * 100:>9.0f}%"
+            f"{row['v2']['at_1'] * 100:>9.0f}%"
         )
 
-    print("-" * 72)
+    print("-" * 75)
 
-    baseline_average = sum(
-        row["baseline_at_4"]
-        for row in rows
-    ) / len(rows)
+    for metric in ["at_4", "at_1"]:
 
-    query_aware_average = sum(
-        row["query_aware_at_4"]
-        for row in rows
-    ) / len(rows)
+        baseline_average = sum(
+            row["baseline"][metric]
+            for row in rows
+        ) / len(rows)
 
-    baseline_top1_average = sum(
-        row["baseline_at_1"]
-        for row in rows
-    ) / len(rows)
+        v1_average = sum(
+            row["v1"][metric]
+            for row in rows
+        ) / len(rows)
 
-    query_aware_top1_average = sum(
-        row["query_aware_at_1"]
-        for row in rows
-    ) / len(rows)
+        v2_average = sum(
+            row["v2"][metric]
+            for row in rows
+        ) / len(rows)
 
-    print(
-        f"{'Average':<12}"
-        f"{baseline_average * 100:>13.1f}%"
-        f"{query_aware_average * 100:>15.1f}%"
-        f"{baseline_top1_average * 100:>13.1f}%"
-        f"{query_aware_top1_average * 100:>15.1f}%"
-    )
+        label = (
+            "Average@4"
+            if metric == "at_4"
+            else "Average@1"
+        )
+
+        print(
+            f"{label:<12}"
+            f"{baseline_average * 100:>12.1f}%"
+            f"{v1_average * 100:>9.1f}%"
+            f"{v2_average * 100:>9.1f}%"
+        )
 
     print()
+    print("Top-ranked restaurants")
+    print("=" * 75)
 
-    print("Top results")
-    print("=" * 72)
+    for row in rows:
 
-    for item in QUESTIONS:
-
-        question = item["question"]
-
-        documents = retrieve_documents(
-            vector_store,
-            question,
-            k=4,
-        )
-
-        baseline_documents = (
-            baseline_rank_restaurants(
-                documents.copy()
-            )
-        )
-
-        query_aware_documents = (
-            rank_restaurants(
-                documents.copy(),
-                question,
-            )
-        )
-
+        print(f"\n{row['id'].upper()}")
         print(
-            f"\n{item['id'].upper()}"
+            f"Baseline: {row['baseline_top']}"
         )
-
         print(
-            "Baseline:    "
-            f"{baseline_documents[0].metadata.get('name')}"
+            f"V1:       {row['v1_top']}"
         )
-
         print(
-            "Query-aware: "
-            f"{query_aware_documents[0].metadata.get('name')}"
+            f"V2:       {row['v2_top']}"
         )
 
 
