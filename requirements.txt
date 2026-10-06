@@ -1,1 +1,5 @@
-
+data/
+notebooks/
+src/
+evaluation/
+assets/
