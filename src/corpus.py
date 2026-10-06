@@ -7,6 +7,25 @@ import pandas as pd
 
 
 # ---------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------
+
+def is_true(value):
+    """Return True only for boolean-like true values."""
+
+    if pd.isna(value):
+        return False
+
+    if isinstance(value, bool):
+        return value
+
+    if isinstance(value, str):
+        return value.strip().lower() == "true"
+
+    return bool(value)
+
+
+# ---------------------------------------------------------------------
 # Restaurant information
 # ---------------------------------------------------------------------
 
@@ -56,7 +75,7 @@ def format_services(row):
     }
 
     for column, label in service_columns.items():
-        if row.get(column) is True:
+        if is_true(row.get(column)):
             services.append(label)
 
     if not services:
@@ -79,7 +98,7 @@ def format_serving_options(row):
     }
 
     for column, label in serving_columns.items():
-        if row.get(column) is True:
+        if is_true(row.get(column)):
             options.append(label)
 
     if not options:
@@ -96,6 +115,12 @@ def format_landmarks(row):
     """Describe nearby Padova landmarks."""
 
     landmarks = row.get("nearest_attractions")
+
+    if landmarks is None:
+        return ""
+
+    if isinstance(landmarks, float) and pd.isna(landmarks):
+        return ""
 
     if not landmarks:
         return ""
@@ -168,8 +193,13 @@ def format_reviews(place_id, reviews):
         else:
             date = "Unknown date"
 
+        if pd.isna(rating):
+            rating_text = "Unknown rating"
+        else:
+            rating_text = f"{rating}/5"
+
         lines.append(
-            f"- {rating}/5, {date}: {text}"
+            f"- {rating_text}, {date}: {text}"
         )
 
     return "\n".join(lines) + "\n"
@@ -188,15 +218,22 @@ def build_restaurant_document(row, reviews):
         format_serving_options(row),
         format_landmarks(row),
         format_opening_hours(row),
-        format_reviews(row["place_id"], reviews),
+        format_reviews(
+            row["place_id"],
+            reviews,
+        ),
     ]
 
     return "\n".join(
         section.strip()
         for section in sections
-        if section.strip()
+        if section and section.strip()
     )
 
+
+# ---------------------------------------------------------------------
+# Corpus
+# ---------------------------------------------------------------------
 
 def build_corpus(restaurants, reviews):
     """Build one document and metadata dictionary per restaurant."""
@@ -220,7 +257,9 @@ def build_corpus(restaurants, reviews):
                     "user_ratings_total"
                 ),
                 "price_level": row.get("price_level"),
-                "serves_wine": row.get("serves_wine"),
+                "serves_wine": is_true(
+                    row.get("serves_wine")
+                ),
             },
         }
 
@@ -240,6 +279,7 @@ def save_corpus(
     """Save the generated restaurant corpus as JSON."""
 
     output_path = Path(output_file)
+
     output_path.parent.mkdir(
         parents=True,
         exist_ok=True,
