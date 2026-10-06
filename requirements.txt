@@ -3,3 +3,7 @@ notebooks/
 src/
 evaluation/
 assets/
+
+python-dotenv
+pandas
+requests
