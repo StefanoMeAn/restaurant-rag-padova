@@ -51,7 +51,7 @@ def load_llm():
         task="text-generation",
         model=model,
         tokenizer=tokenizer,
-        max_new_tokens=200,
+        max_new_tokens=150,
         temperature=0.3,
         top_p=0.8,
         repetition_penalty=1.1,
@@ -201,7 +201,8 @@ def build_prompt(
                 "8. Never claim that a restaurant offers a service, "
                 "food, opening time, or other feature unless it "
                 "appears in the provided information.\n"
-                "9. Keep the answer concise and natural."
+                "9. Keep the answer concise: recommend at most two restaurants "
+                "and answer in no more than 120 words."
             ),
         },
         {
