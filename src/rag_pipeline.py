@@ -283,14 +283,15 @@ class RestaurantRAG:
         documents = retrieve_documents(
             self.vector_store,
             question,
-            k=k,
+            k=CANDIDATE_K,
         )
-
-        # Rank candidates using structured metadata
+        
         documents = rank_restaurants(
             documents,
             question,
         )
+        
+        documents = documents[:k]
 
         # Build structured context
         context = build_context(
