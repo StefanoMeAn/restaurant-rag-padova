@@ -186,14 +186,50 @@ def build_context(documents):
             "location",
             "Unknown",
         )
+    
+        price_level = metadata.get(
+        "price_level",
+        "Unknown",
+        )
+    
+        delivery = metadata.get(
+            "delivery",
+            False,
+        )
+        
+        dine_in = metadata.get(
+            "dine_in",
+            False,
+        )
+        
+        reservable = metadata.get(
+            "reservable",
+            False,
+        )
+        
+        serves_wine = metadata.get(
+            "serves_wine",
+            False,
+        )
+        
+        serves_beer = metadata.get(
+            "serves_beer",
+            False,
+        )
 
         section = (
             f"Rank: {rank}\n"
             f"Restaurant: {name}\n"
             f"Average rating: {rating}/5\n"
             f"Number of ratings: {rating_count}\n"
+            f"Price level: {price_level}\n"
+            f"Delivery: {delivery}\n"
+            f"Dine-in: {dine_in}\n"
+            f"Reservable: {reservable}\n"
+            f"Serves wine: {serves_wine}\n"
+            f"Serves beer: {serves_beer}\n"
             f"Location: {location}\n\n"
-            f"Retrieved information:\n"
+            f"Additional retrieved information:\n"
             f"{document.page_content}"
         )
 
