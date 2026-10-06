@@ -7,3 +7,13 @@ assets/
 python-dotenv
 pandas
 requests
+beautifulsoup4
+geopy
+
+torch
+sentence-transformers
+langchain-core
+langchain-chroma
+langchain-huggingface
+langchain-text-splitters
+chromadb
