@@ -53,7 +53,8 @@ def evaluate():
         )
 
         documents = rank_restaurants(
-            documents
+            documents,
+            question
         )
 
         retrieved = []
