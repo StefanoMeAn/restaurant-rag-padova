@@ -10,18 +10,10 @@ from transformers import (
 
 from src.vector_store import load_vector_store
 
-# ---------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------
 
 READER_MODEL_NAME = "microsoft/Phi-3-mini-4k-instruct"
-
 TOP_K = 4
 
-
-# ---------------------------------------------------------------------
-# Language model
-# ---------------------------------------------------------------------
 
 def load_llm():
     """Load Phi-3 Mini for answer generation."""
@@ -69,10 +61,6 @@ def load_llm():
     return tokenizer, generator
 
 
-# ---------------------------------------------------------------------
-# Retrieval
-# ---------------------------------------------------------------------
-
 def retrieve_documents(
     vector_store,
     question,
@@ -103,6 +91,30 @@ def retrieve_documents(
             break
 
     return selected
+
+
+def rank_restaurants(documents):
+    """Rank retrieved restaurants using structured rating metadata."""
+
+    def ranking_key(document):
+
+        rating = (
+            document.metadata.get("rating")
+            or 0
+        )
+
+        rating_count = (
+            document.metadata.get("user_ratings_total")
+            or 0
+        )
+
+        return rating, rating_count
+
+    return sorted(
+        documents,
+        key=ranking_key,
+        reverse=True,
+    )
 
 
 def build_context(documents):
@@ -145,13 +157,16 @@ def build_context(documents):
 
         context_sections.append(section)
 
-    return "\n\n---\n\n".join(context_sections)
+    return "\n\n---\n\n".join(
+        context_sections
+    )
 
-# ---------------------------------------------------------------------
-# Prompt
-# ---------------------------------------------------------------------
 
-def build_prompt(tokenizer, question, context):
+def build_prompt(
+    tokenizer,
+    question,
+    context,
+):
     """Build a grounded Phi-3 prompt for restaurant recommendations."""
 
     messages = [
@@ -162,30 +177,38 @@ def build_prompt(tokenizer, question, context):
                 "specialized in restaurants in Padova, Italy.\n\n"
 
                 "You must answer using only the information provided "
-                "in the retrieved restaurant context.\n\n"
+                "in the restaurant information below.\n\n"
 
                 "Rules:\n"
-                "1. Do not invent facts that are not present in the context.\n"
-                "2. Do not refer to 'documents', 'context', or document numbers "
-                "in your answer.\n"
-                "3. When the user asks for the 'best' restaurant, do not treat "
-                "a single positive review as proof that it is objectively the best.\n"
-                "4. Compare the available restaurants using evidence such as "
-                "ratings, number of ratings, reviews, services, price level, "
-                "and other information present in the context.\n"
-                "5. If the evidence is insufficient to identify one clear best "
-                "option, say that explicitly and recommend the strongest "
-                "candidate or candidates based on the available information.\n"
-                "6. Explain briefly why each recommendation matches the request.\n"
-                "7. Never claim that a restaurant offers a service, food, "
-                "opening time, or other feature unless it appears in the context.\n"
-                "8. Keep the answer concise and natural."
+                "1. Do not invent facts that are not present in the "
+                "provided information.\n"
+                "2. Do not refer to documents, context, chunks, or "
+                "document numbers in your answer.\n"
+                "3. When the user asks for the best restaurant, do "
+                "not treat a single positive review as proof that it "
+                "is objectively the best.\n"
+                "4. Compare restaurants using available evidence such "
+                "as average rating, number of ratings, reviews, "
+                "services, price level, and location.\n"
+                "5. Give more importance to aggregate ratings and "
+                "the number of ratings than to a single review.\n"
+                "6. If the evidence is insufficient to identify one "
+                "clear best option, say so and recommend the strongest "
+                "candidate or candidates based on the available "
+                "information.\n"
+                "7. Explain briefly why the recommendation matches "
+                "the user's request.\n"
+                "8. Never claim that a restaurant offers a service, "
+                "food, opening time, or other feature unless it "
+                "appears in the provided information.\n"
+                "9. Keep the answer concise and natural."
             ),
         },
         {
             "role": "user",
             "content": (
-                f"Restaurant information:\n\n{context}\n\n"
+                f"Restaurant information:\n\n"
+                f"{context}\n\n"
                 f"User question: {question}"
             ),
         },
@@ -197,9 +220,6 @@ def build_prompt(tokenizer, question, context):
         add_generation_prompt=True,
     )
 
-# ---------------------------------------------------------------------
-# RAG
-# ---------------------------------------------------------------------
 
 class RestaurantRAG:
     """Restaurant recommendation RAG pipeline."""
@@ -207,51 +227,84 @@ class RestaurantRAG:
     def __init__(self):
 
         print("Loading vector database...")
+
         self.vector_store = load_vector_store()
 
         print("Loading Phi-3...")
+
         self.tokenizer, self.generator = load_llm()
 
-    def ask(self, question, k=TOP_K):
+    def ask(
+        self,
+        question,
+        k=TOP_K,
+    ):
         """Answer a restaurant question using RAG."""
 
+        # Retrieve semantically relevant restaurants
         documents = retrieve_documents(
             self.vector_store,
             question,
             k=k,
         )
 
-        context = build_context(documents)
+        # Rank candidates using structured metadata
+        documents = rank_restaurants(
+            documents
+        )
 
+        # Build structured context
+        context = build_context(
+            documents
+        )
+
+        # Build grounded prompt
         prompt = build_prompt(
             self.tokenizer,
             question,
             context,
         )
 
-        result = self.generator(prompt)
+        # Generate answer
+        result = self.generator(
+            prompt
+        )
 
-        answer = result[0]["generated_text"].strip()
+        answer = (
+            result[0]["generated_text"]
+            .strip()
+        )
 
+        # Return answer and retrieved sources
         return {
             "question": question,
             "answer": answer,
             "sources": [
                 {
-                    "name": document.metadata.get("name"),
-                    "place_id": document.metadata.get("place_id"),
-                    "chunk_id": document.metadata.get("chunk_id"),
+                    "name": document.metadata.get(
+                        "name"
+                    ),
+                    "place_id": document.metadata.get(
+                        "place_id"
+                    ),
+                    "rating": document.metadata.get(
+                        "rating"
+                    ),
+                    "user_ratings_total":
+                        document.metadata.get(
+                            "user_ratings_total"
+                        ),
+                    "chunk_id": document.metadata.get(
+                        "chunk_id"
+                    ),
                 }
                 for document in documents
             ],
         }
 
 
-# ---------------------------------------------------------------------
-# Interactive demo
-# ---------------------------------------------------------------------
-
 def main():
+    """Run the Restaurant RAG command-line interface."""
 
     rag = RestaurantRAG()
 
@@ -260,7 +313,9 @@ def main():
 
     while True:
 
-        question = input("Question: ").strip()
+        question = input(
+            "Question: "
+        ).strip()
 
         if question.lower() in {
             "quit",
@@ -272,15 +327,34 @@ def main():
         if not question:
             continue
 
-        result = rag.ask(question)
+        result = rag.ask(
+            question
+        )
 
         print("\nAnswer:")
-        print(result["answer"])
+        print(
+            result["answer"]
+        )
 
-        print("\nRetrieved restaurants:")
+        print(
+            "\nRetrieved restaurants:"
+        )
 
         for source in result["sources"]:
-            print(f"- {source['name']}")
+
+            rating = source.get(
+                "rating"
+            )
+
+            rating_count = source.get(
+                "user_ratings_total"
+            )
+
+            print(
+                f"- {source['name']} "
+                f"({rating}/5, "
+                f"{rating_count} ratings)"
+            )
 
         print()
 
