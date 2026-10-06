@@ -22,5 +22,9 @@ venv/
 embeddings/
 chroma_db/
 
+# Original Google Places dataset
+data/raw/*.csv
+data/processed/*.json
+
 # Large/local generated files
 *.log
