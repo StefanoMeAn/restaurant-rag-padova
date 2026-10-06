@@ -1,4 +1,4 @@
-# Restaurant RAG Padova 🍽️
+# Restaurant RAG Padova 
 
 A Retrieval-Augmented Generation (RAG) project for searching and recommending restaurants in **Padova, Italy**.
 
