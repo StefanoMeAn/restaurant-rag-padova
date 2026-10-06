@@ -13,7 +13,7 @@ from src.vector_store import load_vector_store
 
 READER_MODEL_NAME = "microsoft/Phi-3-mini-4k-instruct"
 TOP_K = 4
-
+CANDIDATE_K = 20
 
 def load_llm():
     """Load Phi-3 Mini for answer generation."""
@@ -65,9 +65,9 @@ def retrieve_documents(
     vector_store,
     question,
     k=TOP_K,
-    fetch_k=20,
+    fetch_k=50,
 ):
-    """Retrieve relevant chunks from unique restaurants."""
+    """Retrieve semantically relevant unique restaurants."""
 
     candidates = vector_store.similarity_search(
         question,
@@ -79,7 +79,9 @@ def retrieve_documents(
 
     for document in candidates:
 
-        place_id = document.metadata.get("place_id")
+        place_id = document.metadata.get(
+            "place_id"
+        )
 
         if place_id in seen_restaurants:
             continue
