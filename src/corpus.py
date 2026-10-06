@@ -242,25 +242,26 @@ def build_corpus(restaurants, reviews):
 
     for _, row in restaurants.iterrows():
 
+        metadata = {
+            "place_id": row.get("place_id"),
+            "name": row.get("name"),
+            "type": row.get("main_type"),
+            "location": row.get("formatted_address"),
+            "rating": row.get("rating"),
+            "user_ratings_total": row.get("user_ratings_total"),
+            "price_level": row.get("price_level"),
+            "serves_wine": is_true(row.get("serves_wine")),
+        }
+
+        # Replace missing values (NaN) with None
+        metadata = {
+            key: None if pd.isna(value) else value
+            for key, value in metadata.items()
+        }
+
         document = {
-            "text": build_restaurant_document(
-                row,
-                reviews,
-            ),
-            "metadata": {
-                "place_id": row.get("place_id"),
-                "name": row.get("name"),
-                "type": row.get("main_type"),
-                "location": row.get("formatted_address"),
-                "rating": row.get("rating"),
-                "user_ratings_total": row.get(
-                    "user_ratings_total"
-                ),
-                "price_level": row.get("price_level"),
-                "serves_wine": is_true(
-                    row.get("serves_wine")
-                ),
-            },
+            "text": build_restaurant_document(row, reviews),
+            "metadata": metadata,
         }
 
         documents.append(document)
