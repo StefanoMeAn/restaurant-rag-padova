@@ -93,29 +93,64 @@ def retrieve_documents(
     return selected
 
 
-def rank_restaurants(documents):
-    """Rank retrieved restaurants using structured rating metadata."""
+def rank_restaurants(documents, question):
+    """Rank restaurants according to the user's query."""
+
+    query = question.lower()
+
+    wants_cheap = any(
+        word in query
+        for word in [
+            "cheap",
+            "inexpensive",
+            "affordable",
+            "budget",
+        ]
+    )
+
+    wants_wine = "wine" in query
+
+    wants_delivery = any(
+        word in query
+        for word in [
+            "delivery",
+            "deliver",
+        ]
+    )
 
     def ranking_key(document):
+        metadata = document.metadata
 
-        rating = (
-            document.metadata.get("rating")
-            or 0
-        )
-
+        rating = metadata.get("rating") or 0
         rating_count = (
-            document.metadata.get("user_ratings_total")
-            or 0
+            metadata.get("user_ratings_total") or 0
         )
 
-        return rating, rating_count
+        constraint_score = 0
+
+        if wants_cheap:
+            if metadata.get("price_level") == "inexpensive ($)":
+                constraint_score += 1
+
+        if wants_wine:
+            if metadata.get("serves_wine") is True:
+                constraint_score += 1
+
+        if wants_delivery:
+            if metadata.get("delivery") is True:
+                constraint_score += 1
+
+        return (
+            constraint_score,
+            rating,
+            rating_count,
+        )
 
     return sorted(
         documents,
         key=ranking_key,
         reverse=True,
     )
-
 
 def build_context(documents):
     """Build structured context from retrieved restaurant chunks."""
@@ -251,7 +286,8 @@ class RestaurantRAG:
 
         # Rank candidates using structured metadata
         documents = rank_restaurants(
-            documents
+            documents,
+            question,
         )
 
         # Build structured context
