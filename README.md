@@ -1,4 +1,4 @@
-# 🍽️ Restaurant RAG Padova
+# Restaurant RAG Padova
 
 A Retrieval-Augmented Generation (RAG) system for restaurant search and recommendation in **Padova, Italy**, built from a custom dataset collected using the Google Places API.
 
