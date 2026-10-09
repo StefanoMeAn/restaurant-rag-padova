@@ -6,15 +6,15 @@ The dataset contains **556 restaurants and 2,545 reviews**, collected using the 
 
 ## Project Overview
 
-This project was developed as part of my NLP coursework during the Masterâ€™s in Physics of Data at the University of Padova. I wanted to explore how semantic retrieval and a local language model could work together for restaurant search, and how structured restaurant attributes could improve recommendations when a query includes a checkable requirement.
+This project was developed as part of my NLP coursework during the Master’s in Physics of Data at the University of Padova. I wanted to explore how semantic retrieval and a local language model could work together for restaurant search, and how structured restaurant attributes could improve recommendations when a query includes a checkable requirement.
 
 Example queries include:
 
-- â€œRecommend a cheap restaurant.â€
-- â€œWhere can I find good vegan food?â€
-- â€œI want a restaurant with good reviews that serves wine.â€
-- â€œWhich restaurant is good for a romantic dinner?â€
-- â€œRecommend a restaurant that offers delivery.â€
+- “Recommend a cheap restaurant.”
+- “Where can I find good vegan food?”
+- “I want a restaurant with good reviews that serves wine.”
+- “Which restaurant is good for a romantic dinner?”
+- “Recommend a restaurant that offers delivery.”
 
 ## Dataset
 
@@ -36,19 +36,19 @@ The Google-derived dataset and API credentials are not included in the repositor
 
 ```text
 User query
-    â†“
+    ↓
 GTE-small embeddings
-    â†“
+    ↓
 Chroma semantic search
-    â†“
+    ↓
 Candidate restaurants
-    â†“
+    ↓
 Query-aware reranking
-    â†“
+    ↓
 Top restaurants
-    â†“
+    ↓
 Local Phi-3 Mini
-    â†“
+    ↓
 Natural-language answer
 ```
 
@@ -93,7 +93,7 @@ For the first recommendation, constraint satisfaction was **66.7%** for the base
 
 ### Example recommendation
 
-For the query â€œRecommend a restaurant that offers delivery,â€ the query-aware retrieval stage can return:
+For the query “Recommend a restaurant that offers delivery,” the query-aware retrieval stage can return:
 
 ```text
 1. XIANG DIMSUM
@@ -123,25 +123,25 @@ For structured facts, deterministic answers can provide stronger factual guarant
 
 ```text
 restaurant-rag-padova/
-â”œâ”€â”€ build_pipeline.py
-â”œâ”€â”€ README.md
-â”œâ”€â”€ requirements.txt
-â”œâ”€â”€ data/
-â”‚   â”œâ”€â”€ raw/
-â”‚   â””â”€â”€ processed/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ data_collection.py
-â”‚   â”œâ”€â”€ preprocessing.py
-â”‚   â”œâ”€â”€ corpus.py
-â”‚   â”œâ”€â”€ vector_store.py
-â”‚   â””â”€â”€ rag_pipeline.py
-â”œâ”€â”€ evaluation/
-â”‚   â”œâ”€â”€ questions.json
-â”‚   â”œâ”€â”€ evaluate_retrieval.py
-â”‚   â”œâ”€â”€ compute_metrics.py
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ notebooks/
-â””â”€â”€ assets/
+├── build_pipeline.py
+├── README.md
+├── requirements.txt
+├── data/
+│   ├── raw/
+│   └── processed/
+├── src/
+│   ├── data_collection.py
+│   ├── preprocessing.py
+│   ├── corpus.py
+│   ├── vector_store.py
+│   └── rag_pipeline.py
+├── evaluation/
+│   ├── questions.json
+│   ├── evaluate_retrieval.py
+│   ├── compute_metrics.py
+│   └── results/
+├── notebooks/
+└── assets/
 ```
 
 The raw Google Places data and API credentials are excluded from Git.
@@ -204,10 +204,10 @@ API keys and the original raw dataset are excluded from Git.
 
 ## Technologies
 
-Python Â· PyTorch Â· Transformers Â· Sentence Transformers Â· LangChain Â· Chroma Â· Phi-3 Â· GTE-small Â· pandas Â· Google Places API
+Python · PyTorch · Transformers · Sentence Transformers · LangChain · Chroma · Phi-3 · GTE-small · pandas · Google Places API
 
 ## Author
 
-**Stefano Meza** â€” Physicist with a Masterâ€™s degree in Physics of Data from the University of Padova, interested in machine learning, deep learning, computer vision, NLP, and scientific computing.
+**Stefano Meza** — Physicist with a Master’s degree in Physics of Data from the University of Padova, interested in machine learning, deep learning, computer vision, NLP, and scientific computing.
 
-[LinkedIn](https://www.linkedin.com/in/stefanomean/) Â· [GitHub](https://github.com/StefanoMeAn)
+[LinkedIn](https://www.linkedin.com/in/stefanomean/) · [GitHub](https://github.com/StefanoMeAn)
