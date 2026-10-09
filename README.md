@@ -1,171 +1,86 @@
-# Restaurant RAG Padova 
+# Restaurant Recommendation System with RAG
 
-A Retrieval-Augmented Generation (RAG) project for searching and recommending restaurants in **Padova, Italy**.
+I built a Retrieval-Augmented Generation (RAG) system for searching and recommending restaurants in Padova, Italy. It combines semantic search over restaurant descriptions and reviews with structured metadata, then uses a local language model to generate natural-language answers.
 
-I built this project as part of my NLP coursework during my Master's in Physics of Data at the University of Padova. The idea was to explore how semantic search and a local language model could be combined to answer natural-language questions about restaurants.
+The dataset contains **556 restaurants and 2,545 reviews**, collected using the Google Places API. In a small evaluation focused on explicit metadata constraints, query-aware reranking increased average top-four constraint satisfaction from **58.3% to 100%** across three test queries.
 
-Instead of starting from an existing dataset, I collected the restaurant data myself using the Google Places API. The final dataset contains **556 restaurants and 2,545 reviews**.
+## Project Overview
 
-Examples of questions the system can handle:
+This project was developed as part of my NLP coursework during the Masterâ€™s in Physics of Data at the University of Padova. I wanted to explore how semantic retrieval and a local language model could work together for restaurant search, and how structured restaurant attributes could improve recommendations when a query includes a checkable requirement.
 
-> *"Recommend a cheap restaurant."*
+Example queries include:
 
-> *"Where can I find good vegan food?"*
+- â€œRecommend a cheap restaurant.â€
+- â€œWhere can I find good vegan food?â€
+- â€œI want a restaurant with good reviews that serves wine.â€
+- â€œWhich restaurant is good for a romantic dinner?â€
+- â€œRecommend a restaurant that offers delivery.â€
 
-> *"I want a restaurant with good reviews that serves wine."*
+## Dataset
 
-> *"Which restaurant is good for a romantic dinner?"*
+I collected restaurant data using the Google Places API. I divided Padova into overlapping geographic search regions, discovered restaurants, retrieved available place details and reviews, then cleaned and deduplicated the results.
 
-> *"Recommend a restaurant that offers delivery."*
+| Item | Count |
+|---|---:|
+| Restaurants | 556 |
+| Reviews | 2,545 |
+| Corpus chunks | Approximately 2,587 |
 
----
+The collected fields include name, address, rating, number of ratings, price level, restaurant type, delivery and dine-in availability, reservation availability, meal services, beer and wine availability, opening hours, coordinates, and customer reviews.
 
-## How it works
+The Google-derived dataset and API credentials are not included in the repository. The collection procedure is documented in `src/data_collection.py`.
 
-The pipeline combines semantic retrieval with structured restaurant information:
+## Methodology
+
+### Retrieval and generation pipeline
 
 ```text
 User query
-    │
-    ▼
+    â†“
 GTE-small embeddings
-    │
-    ▼
+    â†“
 Chroma semantic search
-    │
-    ▼
+    â†“
 Candidate restaurants
-    │
-    ▼
+    â†“
 Query-aware reranking
-    │
-    ▼
+    â†“
 Top restaurants
-    │
-    ▼
-Phi-3 Mini
-    │
-    ▼
+    â†“
+Local Phi-3 Mini
+    â†“
 Natural-language answer
 ```
 
 The main components are:
 
-- **GTE-small** for text embeddings
-- **Chroma** as the vector database
-- **LangChain** for the retrieval pipeline
-- **Phi-3 Mini 4K Instruct** as the local language model
-- **Google Places API** for building the original dataset
+- **Google Places API** for collecting the source data.
+- **thenlper/gte-small** for normalized text embeddings.
+- **Chroma** for cosine-similarity search over the corpus.
+- **LangChain** for assembling the retrieval pipeline.
+- **Phi-3 Mini 4K Instruct** as the local language model, run in 4-bit quantization with `bitsandbytes`.
 
-Phi-3 runs locally in **4-bit quantization with bitsandbytes**.
+### Corpus preparation
 
----
+After preprocessing, I create one document per restaurant by combining its structured information with available reviews. The documents are split into chunks of **500 characters** with **50 characters** of overlap, producing approximately 2,587 chunks. The chunks are embedded and stored in Chroma.
 
-## Building the dataset
+### Query-aware reranking
 
-One part of the project I wanted to implement myself was the data collection.
+The initial version used semantic retrieval followed by rating-based ranking. During testing, I found that semantic similarity alone could return restaurants that were relevant to a query but did not meet explicit requirements, such as being inexpensive or offering delivery.
 
-I divided Padova into overlapping geographic search regions and used the Google Places API to discover restaurants. I then retrieved detailed information and available reviews for each place.
+The current version retrieves **20 unique restaurant candidates**, detects supported constraints, and reranks candidates using restaurant metadata before returning the top four. Explicitly handled constraints currently include **price, wine availability, and delivery**. Semantic retrieval remains useful for finding candidates, while metadata is used to check requirements that can be verified directly.
 
-After cleaning and deduplication, the dataset contains:
+## Results
 
-| | Count |
-|---|---:|
-| Restaurants | **556** |
-| Reviews | **2,545** |
+### Retrieval evaluation
 
-For each restaurant I collected information such as:
+I compared three retrieval strategies on three queries whose constraints can be checked directly against the metadata:
 
-- name and address
-- rating and number of ratings
-- price level
-- restaurant type
-- delivery and dine-in availability
-- reservation availability
-- breakfast/lunch/dinner service
-- beer and wine availability
-- opening hours
-- coordinates
-- customer reviews
+- **Baseline:** semantic retrieval followed by rating-based ranking.
+- **V1:** query-aware reranking of the original four candidates.
+- **V2:** retrieval of 20 candidates followed by query-aware reranking.
 
-The complete Google-derived dataset is not distributed in this repository, but the collection methodology is available in `src/data_collection.py`.
-
----
-
-## Preparing the RAG corpus
-
-After preprocessing the raw data, I construct one document for each restaurant combining structured metadata with its available reviews.
-
-The documents are split using:
-
-```text
-chunk size    = 500
-chunk overlap = 50
-```
-
-This produces approximately **2,587 chunks** from the 556 restaurant documents.
-
-The chunks are embedded using:
-
-```text
-thenlper/gte-small
-```
-
-with normalized embeddings and stored in Chroma using cosine similarity.
-
----
-
-## Improving the retrieval
-
-The first version of the project used standard semantic retrieval.
-
-While testing it, I noticed an important problem.
-
-For a question such as:
-
-> *"Recommend a cheap restaurant."*
-
-semantic similarity could retrieve restaurants that were relevant to the question but were not actually classified as inexpensive.
-
-The same problem appeared with constraints such as **delivery**.
-
-So I changed the pipeline to combine semantic retrieval with the structured metadata already available in the dataset.
-
-The current version works approximately like this:
-
-```text
-Semantic search
-      ↓
-20 unique restaurant candidates
-      ↓
-Detect structured query constraints
-      ↓
-Metadata-aware reranking
-      ↓
-Top 4 restaurants
-```
-
-At the moment I explicitly handle constraints related to:
-
-- price
-- wine availability
-- delivery
-
-This keeps semantic search useful for finding relevant candidates while using structured information when the user asks for something that can be checked directly.
-
----
-
-## Evaluation
-
-I compared three versions of the retrieval pipeline:
-
-**Baseline** — semantic retrieval followed by rating-based ranking.
-
-**V1** — query-aware reranking of the original four candidates.
-
-**V2** — retrieve a larger pool of 20 candidates first, then apply query-aware reranking.
-
-For three queries with constraints that can be checked directly from the metadata, I measured the percentage of the top four recommendations satisfying the requested constraint.
+The metric is the percentage of the top four recommendations satisfying the requested constraint.
 
 | Query | Baseline@4 | V1@4 | V2@4 |
 |---|---:|---:|---:|
@@ -174,49 +89,11 @@ For three queries with constraints that can be checked directly from the metadat
 | Delivery | 50% | 50% | **100%** |
 | **Average** | **58.3%** | **58.3%** | **100%** |
 
-For the first recommendation:
+For the first recommendation, constraint satisfaction was **66.7%** for the baseline and **100%** for both query-aware strategies. These results apply only to the three structured-constraint queries; they are not a measure of overall RAG accuracy. The experiment suggests that retrieving a larger candidate pool helps a second ranking stage enforce explicit constraints.
 
-| Strategy | Constraint satisfaction @1 |
-|---|---:|
-| Baseline | 66.7% |
-| V1 | 100% |
-| V2 | 100% |
+### Example recommendation
 
-These numbers are deliberately limited to the **three structured-constraint queries** above. They are not meant to represent overall RAG accuracy.
-
-The experiment mainly showed me that increasing the candidate pool is useful when a second ranking stage needs to enforce explicit constraints.
-
----
-
-## What I learned
-
-One of the more interesting parts of this project was seeing the difference between **retrieval quality and generation quality**.
-
-After improving retrieval, the system could correctly identify restaurants satisfying structured constraints. However, Phi-3 could still occasionally introduce details that were not fully supported by the retrieved information.
-
-For example, the model sometimes added descriptions about atmosphere, food quality, or other characteristics that were not explicitly present in the evidence.
-
-This was a useful result because it showed that:
-
-```text
-good retrieval ≠ automatically grounded generation
-```
-
-For information already represented as structured metadata, a deterministic answer can provide stronger factual guarantees. A language model becomes more useful when the system needs to interpret unstructured information such as customer reviews.
-
-This is one of the main directions I would explore in a future version of the project.
-
----
-
-## Example
-
-For:
-
-```text
-Recommend a restaurant that offers delivery.
-```
-
-the query-aware retrieval stage can return:
+For the query â€œRecommend a restaurant that offers delivery,â€ the query-aware retrieval stage can return:
 
 ```text
 1. XIANG DIMSUM
@@ -234,59 +111,56 @@ the query-aware retrieval stage can return:
    Delivery: True
 ```
 
-The important difference from the original retrieval approach is that **delivery is checked using structured metadata**, rather than relying only on similarity between the query and restaurant text.
+Here, delivery is checked using structured metadata rather than inferred only from text similarity.
 
----
+### Observations
 
-## Project structure
+The project showed me that retrieval quality and generation quality are separate. After retrieval was improved, the system could identify restaurants satisfying structured constraints, but Phi-3 could still add details about atmosphere or food quality that were not clearly supported by the retrieved evidence.
+
+For structured facts, deterministic answers can provide stronger factual guarantees. A language model is more useful when interpreting unstructured information such as customer reviews. This distinction is an important direction for a future version.
+
+## Repository Structure
 
 ```text
 restaurant-rag-padova/
-│
-├── build_pipeline.py
-├── README.md
-├── requirements.txt
-│
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── src/
-│   ├── data_collection.py
-│   ├── preprocessing.py
-│   ├── corpus.py
-│   ├── vector_store.py
-│   └── rag_pipeline.py
-│
-├── evaluation/
-│   ├── questions.json
-│   ├── evaluate_retrieval.py
-│   ├── compute_metrics.py
-│   └── results/
-│
-├── notebooks/
-└── assets/
+â”œâ”€â”€ build_pipeline.py
+â”œâ”€â”€ README.md
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ raw/
+â”‚   â””â”€â”€ processed/
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ data_collection.py
+â”‚   â”œâ”€â”€ preprocessing.py
+â”‚   â”œâ”€â”€ corpus.py
+â”‚   â”œâ”€â”€ vector_store.py
+â”‚   â””â”€â”€ rag_pipeline.py
+â”œâ”€â”€ evaluation/
+â”‚   â”œâ”€â”€ questions.json
+â”‚   â”œâ”€â”€ evaluate_retrieval.py
+â”‚   â”œâ”€â”€ compute_metrics.py
+â”‚   â””â”€â”€ results/
+â”œâ”€â”€ notebooks/
+â””â”€â”€ assets/
 ```
 
----
+The raw Google Places data and API credentials are excluded from Git.
 
-## Running the project
+## Installation
 
-Clone the repository:
+Clone the repository and create a virtual environment:
 
 ```bash
 git clone git@github.com:StefanoMeAn/restaurant-rag-padova.git
 cd restaurant-rag-padova
-```
-
-Create an environment and install the dependencies:
-
-```bash
 python -m venv .venv
 source .venv/bin/activate
-
 pip install -r requirements.txt
 ```
+
+The local generation pipeline was tested with **PyTorch 2.7.1** and **CUDA 11.8** on an NVIDIA GPU. Adapt the PyTorch installation to the local driver and hardware. The original dataset and Google API key are not required for every use of the existing processed corpus, but are required to recollect source data.
+
+## Usage
 
 Build the preprocessing and vector database pipeline:
 
@@ -306,30 +180,11 @@ Run the retrieval evaluation:
 python evaluation/compute_metrics.py
 ```
 
-### GPU setup
-
-I tested the local generation pipeline with an NVIDIA GPU using:
-
-```text
-PyTorch 2.7.1
-CUDA 11.8
-```
-
-The exact PyTorch installation may need to be adapted to the local NVIDIA driver.
-
----
-
-## Recollecting the data
-
-The original dataset was collected using the Google Places API.
-
-Create a local `.env` file:
+To recollect data, copy `.env.example` to `.env` and set a valid Google Places API key:
 
 ```bash
 cp .env.example .env
 ```
-
-and set:
 
 ```text
 GOOGLE_MAPS_API_KEY=your_api_key_here
@@ -337,33 +192,22 @@ GOOGLE_MAPS_API_KEY=your_api_key_here
 
 API keys and the original raw dataset are excluded from Git.
 
----
+## Limitations and Future Work
 
-## Limitations and future work
+- Query-intent detection currently handles price, wine, and delivery constraints; other intents need to be added.
+- Geographic queries could use explicit distance calculations.
+- The retrieval evaluation uses only three manually selected structured-constraint queries. A larger, manually labelled test set would give a stronger relevance evaluation.
+- Generation faithfulness should be evaluated separately from retrieval quality.
+- Structured facts could be answered deterministically, with the language model used for review summarization and other unstructured questions.
+- Learned reranking models could be compared with the current hand-written constraint rules.
+- The restaurant data is static, so this is an NLP/RAG experiment rather than a real-time recommendation service.
 
-There are several things I would improve if I continued the project:
+## Technologies
 
-- expand query-intent detection beyond price, wine and delivery
-- improve geographic queries using explicit distances
-- evaluate semantic relevance on a larger manually labelled test set
-- evaluate generation faithfulness separately from retrieval
-- combine deterministic answers for structured facts with LLM-based review summarization
-- experiment with reranking models instead of hand-written constraint rules
-
-The restaurant data is also static, so this system should be considered an NLP/RAG experiment rather than a real-time restaurant recommendation service.
-
----
-
-## Tech stack
-
-`Python` · `PyTorch` · `Transformers` · `Sentence Transformers` · `LangChain` · `Chroma` · `Phi-3` · `GTE-small` · `pandas` · `Google Places API`
-
----
+Python Â· PyTorch Â· Transformers Â· Sentence Transformers Â· LangChain Â· Chroma Â· Phi-3 Â· GTE-small Â· pandas Â· Google Places API
 
 ## Author
 
-**Stefano Meza**
+**Stefano Meza** â€” Physicist with a Masterâ€™s degree in Physics of Data from the University of Padova, interested in machine learning, deep learning, computer vision, NLP, and scientific computing.
 
-Physicist with a Master's degree in Physics of Data from the **University of Padova**, interested in machine learning, deep learning, computer vision, NLP and scientific computing.
-
-[LinkedIn](https://www.linkedin.com/in/stefanomean/) · [GitHub](https://github.com/StefanoMeAn)
+[LinkedIn](https://www.linkedin.com/in/stefanomean/) Â· [GitHub](https://github.com/StefanoMeAn)
