@@ -1,12 +1,12 @@
 # Restaurant Recommendation System with RAG
 
-I built a Retrieval-Augmented Generation (RAG) system for searching and recommending restaurants in Padova, Italy. It combines semantic search over restaurant descriptions and reviews with structured metadata, then uses a local language model to generate natural-language answers.
+This project implements a Retrieval-Augmented Generation (RAG) system for searching and recommending restaurants in Padova, Italy. It combines semantic search over restaurant descriptions and reviews with structured metadata, then uses a local language model to generate natural-language answers.
 
 The dataset contains **556 restaurants and 2,545 reviews**, collected using the Google Places API. In a small evaluation focused on explicit metadata constraints, query-aware reranking increased average top-four constraint satisfaction from **58.3% to 100%** across three test queries.
 
 ## Project Overview
 
-This project was developed as part of my NLP coursework during the Master’s in Physics of Data at the University of Padova. I wanted to explore how semantic retrieval and a local language model could work together for restaurant search, and how structured restaurant attributes could improve recommendations when a query includes a checkable requirement.
+This project was developed as part of NLP coursework during the Master’s in Physics of Data at the University of Padova. It examines how semantic retrieval and a local language model work together for restaurant search, and whether structured restaurant attributes improve recommendations when a query includes a checkable requirement.
 
 Example queries include:
 
@@ -18,7 +18,7 @@ Example queries include:
 
 ## Dataset
 
-I collected restaurant data using the Google Places API. I divided Padova into overlapping geographic search regions, discovered restaurants, retrieved available place details and reviews, then cleaned and deduplicated the results.
+Restaurant data were collected using the Google Places API. Padova was divided into overlapping geographic search regions; restaurant details and reviews were then retrieved, cleaned, and deduplicated.
 
 | Item | Count |
 |---|---:|
@@ -62,11 +62,11 @@ The main components are:
 
 ### Corpus preparation
 
-After preprocessing, I create one document per restaurant by combining its structured information with available reviews. The documents are split into chunks of **500 characters** with **50 characters** of overlap, producing approximately 2,587 chunks. The chunks are embedded and stored in Chroma.
+After preprocessing, the pipeline creates one document per restaurant by combining its structured information with available reviews. The documents are split into chunks of **500 characters** with **50 characters** of overlap, producing approximately 2,587 chunks. The chunks are embedded and stored in Chroma.
 
 ### Query-aware reranking
 
-The initial version used semantic retrieval followed by rating-based ranking. During testing, I found that semantic similarity alone could return restaurants that were relevant to a query but did not meet explicit requirements, such as being inexpensive or offering delivery.
+The initial version used semantic retrieval followed by rating-based ranking. During testing, semantic similarity alone sometimes returned restaurants that were relevant to a query but did not meet explicit requirements, such as being inexpensive or offering delivery.
 
 The current version retrieves **20 unique restaurant candidates**, detects supported constraints, and reranks candidates using restaurant metadata before returning the top four. Explicitly handled constraints currently include **price, wine availability, and delivery**. Semantic retrieval remains useful for finding candidates, while metadata is used to check requirements that can be verified directly.
 
@@ -74,7 +74,7 @@ The current version retrieves **20 unique restaurant candidates**, detects suppo
 
 ### Retrieval evaluation
 
-I compared three retrieval strategies on three queries whose constraints can be checked directly against the metadata:
+Three retrieval strategies were compared on three queries whose constraints can be checked directly against the metadata:
 
 - **Baseline:** semantic retrieval followed by rating-based ranking.
 - **V1:** query-aware reranking of the original four candidates.
@@ -115,7 +115,7 @@ Here, delivery is checked using structured metadata rather than inferred only fr
 
 ### Observations
 
-The project showed me that retrieval quality and generation quality are separate. After retrieval was improved, the system could identify restaurants satisfying structured constraints, but Phi-3 could still add details about atmosphere or food quality that were not clearly supported by the retrieved evidence.
+The results show that retrieval quality and generation quality are separate. After retrieval was improved, the system could identify restaurants satisfying structured constraints, but Phi-3 could still add details about atmosphere or food quality that were not clearly supported by the retrieved evidence.
 
 For structured facts, deterministic answers can provide stronger factual guarantees. A language model is more useful when interpreting unstructured information such as customer reviews. This distinction is an important direction for a future version.
 
@@ -151,46 +151,45 @@ The raw Google Places data and API credentials are excluded from Git.
 Clone the repository and create a virtual environment:
 
 ```bash
-git clone git@github.com:StefanoMeAn/restaurant-rag-padova.git
+git clone https://github.com/StefanoMeAn/restaurant-rag-padova.git
 cd restaurant-rag-padova
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-The local generation pipeline was tested with **PyTorch 2.7.1** and **CUDA 11.8** on an NVIDIA GPU. Adapt the PyTorch installation to the local driver and hardware. The original dataset and Google API key are not required for every use of the existing processed corpus, but are required to recollect source data.
+The local generation pipeline was tested with **PyTorch 2.7.1** and **CUDA 11.8** on an NVIDIA GPU. Choose a PyTorch build compatible with the local driver and hardware. The `requirements.txt` file records Python dependencies; running the Phi-3 reader also requires downloading model weights from Hugging Face and enough CPU memory or GPU memory. The raw restaurant data and built vector database are not distributed with this repository, so new installations cannot run the full pipeline without first obtaining source data.
 
 ## Usage
 
-Build the preprocessing and vector database pipeline:
+The repository does not include the original Google Places dataset or the persisted Chroma database. To reconstruct the pipeline, obtain the source data first. You can collect a new dataset with a Google Places API key, subject to the API's availability, access requirements, and billing, or supply your own CSV files matching the expected schema.
+
+To collect new data, copy `.env.example` to `.env`, set `GOOGLE_MAPS_API_KEY`, and run:
+
+```bash
+cp .env.example .env
+python -m src.data_collection
+```
+
+The collection code saves `data/raw/restaurants.csv` and `data/raw/reviews.csv`. With those files present, build the preprocessing and vector database pipeline:
 
 ```bash
 python build_pipeline.py
 ```
 
-Run the RAG system:
+Run the RAG system after the vector database exists:
 
 ```bash
 python -m src.rag_pipeline
 ```
 
-Run the retrieval evaluation:
+Run the retrieval evaluation from the repository root:
 
 ```bash
-python evaluation/compute_metrics.py
+python -m evaluation.compute_metrics
 ```
 
-To recollect data, copy `.env.example` to `.env` and set a valid Google Places API key:
-
-```bash
-cp .env.example .env
-```
-
-```text
-GOOGLE_MAPS_API_KEY=your_api_key_here
-```
-
-API keys and the original raw dataset are excluded from Git.
+This script also requires the Chroma database. Keep API keys and the raw Google Places data out of Git. The stored evaluation summaries document the original experiments, but reproducing those scores requires the corresponding dataset and embedding store.
 
 ## Limitations and Future Work
 
